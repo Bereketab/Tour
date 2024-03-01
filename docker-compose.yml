@@ -1,0 +1,28 @@
+version: '3'
+services:
+  # tourist-db:
+  #   restart: always
+  #   container_name: tourist-db
+  #   image: postgis/postgis
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=tour_gis
+  #   volumes:
+  #     - /database/data:/var/lib/postgresql/data
+
+  tourist-backend-api:
+    container_name: tourist-map
+    restart: always
+    build: .
+    ports:
+      - 8000:8000
+    environment:
+      - POSTGRES_HOST=10.2.4.16
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+    volumes:
+        - .:/app
