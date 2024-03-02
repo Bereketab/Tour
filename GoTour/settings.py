@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-bnx%c453clczn84s@s=uum&7&fq$!au0yvoq@3p-ye_q7wxok#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['gotourist.ssgi.gov.et']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -86,8 +86,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'GOTour',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '10.2.4.16',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }

@@ -1,58 +1,194 @@
-<!DOCTYPE html>
-{%load static %}
+<!doctype html>
+{% load static %}
+{% load custom_tags %}
 <html lang="en">
 
 <head>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <title>GIS Application - Extended Template by Cyber313</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+
+    <link href="{% static 'b5/css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@4.1.1/dist/ol-layerswitcher.css" />
-
-    <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet">
-
-    <link href="{% static 'ext/customScroll/css/jquery.mCustomScrollbar.css'%}" rel="stylesheet">
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <link rel="stylesheet" href="https://openlayers.org/en/v3.20.1/css/ol.css" type="text/css">
     <link href="{% static 'css/style.default.css'%}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'jquery-ui.css' %}">
 
+<style>
+ .tree-view {
+        list-style: none;
+    }
+
+    .tree-view li {
+        margin-left: 20px;
+        position: relative;
+    }
+
+    .tree-view li.collapsible > ul {
+        display: none;
+    }
+
+    .tree-view li.collapsible::before {
+        content: '►';
+        position: absolute;
+        left: -20px;
+    }
+
+    .tree-view li.collapsible.collapsed::before {
+        content: '▶';
+    }
+
+    .tree-view li:last-child {
+        margin-left: 0;
+    }
+
+    .tree-view li:last-child::before {
+        content: none;
+    }
+
+</style>
+
+    <title>GO Tour</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-default nav-fixed-top" role="navigation" id="app-nav-bar">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">GO Tour</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="#">GOTour Map Server</a>
+            <input id="autocomplete-input" class="form-control mr-sm-2" type="text"
+            placeholder="Search Destinations or Services" aria-label="Search" autocomplete="off">
+     
+
+            
         </div>
-
-
     </nav>
 
-    <div id="map-canvas"></div>
-    <div class="visible-lg visible-md">
-        <div id="search-box">
-            <form class="form-inline" role="form">
-                <div class="form-group">
-                    <label class="sr-only" for="searchText">Search</label>
-                    <input type="text" class="form-control input-sm" id="searchText" placeholder="Search Location">
-                </div>
-                <button type="submit" class="btn btn-default btn-sm">
-                    <i class="glyphicon glyphicon-search"></i>
-                </button>
-            </form>
-        </div>
-        <div id="sidemenu" class="well">
+    <!-- Rest of your content -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-3">
 
 
-            <div class="list-group point-list-view" style="height: max-content !important">
-                <ul id="treeview" class="tree-view">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home"
+                            aria-selected="true">Catalog</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+                            aria-selected="false">Route</button>
+                    </li>
+                    <!-- <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
+                    </li> -->
                 </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                        aria-labelledby="pills-home-tab">
+                        <ul id="treeview" class="tree-view">
+                            <li>
+                                <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#step1"></span>
+                                <input type="checkbox" id="step1" />
+                                <label for="step1">Services</label>
+                        
+                                <ul id="step1" class="collapse">
+                                   
+                                    {% for service_info in combined_data.services|get_distinct_service_ty_info %}
+                                    <li>
+                                        <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#{{ service_info.service_type }}"></span>
+                                        <input type="checkbox" id="{{ service_info.service_type }}" data-x="{{ obj.x }}" data-y="{{ obj.y }}"> <label for="{{ service_info.service_type }}">{{ service_info.service_type }}</label> ({{ service_info.count }})
+                                        <ul id="{{ service_info.service_type }}" class="collapse">
+                                            {% for obj in service_info.objects %}
+                                                <li>
+                                                    <input type="checkbox" id="{{ obj.id }}" data-x="{{ obj.x }}" data-y="{{ obj.y }}"> <label for="{{ obj.id }}" style="font-size: 13px;">{{ obj.full_name }}</label>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                                </ul>
+                            </li>
+                          
+
+                            <li>
+                                <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#step1"></span>
+                                <input type="checkbox" id="step1" />
+                                <label for="step1">Destination</label>
+                        
+                                <ul id="step1" class="collapse">
+                                   
+                                    {% for destibnation_info in combined_data.destinations|get_distinct_destinations_ty_info %}
+                                    <li>
+                                        <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#{{ destibnation_info.destinatio }}"></span>
+                                        <input type="checkbox" 
+                                        id="{{ destibnation_info.destinatio }}" 
+                                        data-geom="{{ destibnation_info.geom }}" 
+                                        data-objectid="{{ destibnation_info.objectid }}" 
+                                        data-name="{{ destibnation_info.name }}" 
+                                        data-datetimes="{{ destibnation_info.datetimes }}" 
+                                        data-elevation="{{ destibnation_info.elevation }}" 
+                                        data-code="{{ destibnation_info.code }}" 
+                                        data-full_name="{{ destibnation_info.full_name }}" 
+                                        data-short_name="{{ destibnation_info.short_name }}" 
+                                        data-zone="{{ destibnation_info.zone }}" 
+                                        data-wereda="{{ destibnation_info.wereda }}" 
+                                        data-kebele="{{ destibnation_info.kebele }}" 
+                                        data-locality_n="{{ destibnation_info.locality_n }}" 
+                                        data-organizati="{{ destibnation_info.organizati }}" 
+                                        data-destinatio="{{ destibnation_info.destinatio }}" 
+                                        data-status="{{ destibnation_info.status }}" 
+                                        data-area_sqkm="{{ destibnation_info.area_sqkm }}" 
+                                        data-yearly_est="{{ destibnation_info.yearly_est }}" 
+                                        data-unesco_reg="{{ destibnation_info.unesco_reg }}" 
+                                        data-descriptio="{{ destibnation_info.descriptio }}" 
+                                        data-photo_no="{{ destibnation_info.photo_no }}" 
+                                        data-photo_loca="{{ destibnation_info.photo_loca }}" 
+                                        data-site_des_a="{{ destibnation_info.site_des_a }}" 
+                                        data-amharic="{{ destibnation_info.amharic }}" 
+                                        data-english="{{ destibnation_info.english }}" 
+                                        data-x="{{ destibnation_info.x }}" 
+                                        data-y="{{ destibnation_info.y }}" 
+                                        data-image1="{{ destibnation_info.image1 }}" 
+                                        data-image2="{{ destibnation_info.image2 }}">    
+                                        <label for="{{ destibnation_info.destinatio }}">{{ destibnation_info.destination_type }}</label> ({{ destibnation_info.count }})                                    
+                                        <ul id="{{ destibnation_info.destinatio }}" class="collapse">
+                                            {% for obj in destibnation_info.objects %}
+                                                <li>
+                                                    <input type="checkbox" id="{{ obj.id }}" data-x="{{ obj.x }}" data-y="{{ obj.y }}"> <label for="{{ obj.id }}" style="font-size: 13px;">{{ obj.full_name }}</label>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </li>
+                                {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        
+                        
+                    </li>
+                   
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        this part of app is under maintainance we will get back soon</div>
+                    <!-- <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div> -->
+                </div>
+
+
+            </div>
+            <div class="col-9">
+                <div id="map-canvas"></div>
 
             </div>
 
@@ -68,32 +204,121 @@
             </div>
         </div>
     </div>
-
-
+    <script src="{% static 'b5/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/jquery-1.10.2.min.js'%}"></script>
-    <script src="{% static 'js/bootstrap.min.js'%}"></script>
-    <script src="{% static 'ext/customScroll/js/jquery.mCustomScrollbar.min.js'%}"></script>
-    <!-- <script src="{% static 'ext/customScroll/js/jquery.mousewheel.min.js'%}"></script> -->
-    <script src="{% static 'js/application.js'%}"></script>
-    <script src="https://openlayers.org/en/v3.20.1/build/ol.js"></script>
+
+    <script src="{% static 'ol.js' %}"></script>
     <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
-
+    <script src="{% static 'jquery-ui.js' %}"></script>
     <script>
+        $(function() {
+            var combinedData = "{{ combined_data_autocomplete|safe }}";
 
-        const popupCloser = document.getElementById('popup-closer');
+    var combinedData = {
+        services: [
+            { full_name: "Service 1", },
+            { full_name: "Service 2" },
+            // Add more service objects as needed
+        ],
+        destinations: [
+            { full_name: "Destination 1" },
+            { full_name: "Destination 2" },
+            // Add more destination objects as needed
+        ]
+    };
 
-        // Add a click event listener to the close button
-        popupCloser.addEventListener('click', function () {
-            popup.getElement().style.display = 'none'; // Hide the popup
+    var availableTags = [];
+    // Combine service and destination full names into a single array
+    combinedData.services.forEach(function(service) {
+        availableTags.push(service.full_name);
+    });
+    combinedData.destinations.forEach(function(destination) {
+        availableTags.push(destination.full_name);
+    });
+
+    $("#autocomplete-input").autocomplete({
+        source: availableTags
+    });
+});
+        // Function to add markers to the map based on coordinates
+        function addMarkersToMap(coordinates) {
+            // Remove previous markers
+            map.getLayers().forEach(layer => {
+                if (layer.get('name') === 'markers') {
+                    map.removeLayer(layer);
+                }
+            });
+    
+            // Create a vector layer for markers
+            var markerLayer = new ol.layer.Vector({
+                name: 'markers',
+                source: new ol.source.Vector(),
+            });
+    
+            // Add markers to the layer
+            coordinates.forEach(coord => {
+                var marker = new ol.Feature({
+                    geometry: new ol.geom.Point([coord.x, coord.y])
+                });
+                markerLayer.getSource().addFeature(marker);
+            });
+    
+            // Add the marker layer to the map
+            map.addLayer(markerLayer);
+        }
+    
+        $(document).ready(function () {
+            
+            $('.collapse-icon').click(function (event) {
+                event.stopPropagation();
+                $(this).toggleClass('bi-chevron-right bi-chevron-down');
+                var $ul = $(this).siblings('ul');
+                if ($ul.length > 0) {
+                    $ul.toggle();
+                }
+            });
+    
+            function getCheckedLeafNodes($node) {
+                var checkedLeafNodes = [];
+                $node.find(':checkbox:checked').each(function () {
+                    var $checkbox = $(this);
+                    if ($checkbox.siblings('ul').length === 0) {
+                        checkedLeafNodes.push({
+                            id: $checkbox.attr('id'),
+                            x: $checkbox.data('x'),
+                            y: $checkbox.data('y')
+                        });
+                    }
+                });
+    
+                $node.find('ul').each(function () {
+                    var childLeafNodes = getCheckedLeafNodes($(this));
+                    checkedLeafNodes = checkedLeafNodes.concat(childLeafNodes);
+                });
+    
+                return checkedLeafNodes;
+            }
+    
+            function toggleChildren($parentCheckbox) {
+                var isChecked = $parentCheckbox.prop('checked');
+                $parentCheckbox.siblings('ul').find(':checkbox').prop('checked', isChecked);
+            }
+    
+            $('.tree-view :checkbox').change(function () {
+                var $parentCheckbox = $(this);
+                toggleChildren($parentCheckbox);
+    
+                // Get checked leaf nodes after toggling children
+                var checkedLeafNodes = getCheckedLeafNodes($parentCheckbox.closest('ul'));
+    
+                // Add markers to the map based on checked coordinates
+                addMarkersToMap(checkedLeafNodes);
+            });
+    
+            // Trigger checkbox change event on page load to display checked points
+            $('.tree-view :checkbox:checked').trigger('change');
         });
-
-
-        var geoserver_destination_url = "http://localhost:8088/geoserver/cms/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=cms%3Adestinations&maxFeatures=1000&outputFormat=application%2Fjson"
-        var geoserver_service_url = "http://localhost:8088/geoserver/GOTour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GOTour%3Aservices&maxFeatures=1000&outputFormat=application%2Fjson"
-
-        var services = {{ services| safe}}
-        var destinations = {{ destinations| safe}}
-
+    
         var map = new ol.Map({
             layers: [
                 new ol.layer.Tile({
@@ -103,7 +328,7 @@
             ],
             target: 'map-canvas',
             controls: ol.control.defaults({
-                attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+                attributionOptions: ({
                     collapsible: false
                 })
             }),
@@ -117,262 +342,13 @@
             tipLabel: 'Layer Switcher',
             reverse: true,
             groupSelectStyle: 'group'
-
         });
-
+    
         map.addControl(layerSwitcher);
-        (function ($) {
-
-            $(".point-list-view").mCustomScrollbar({
-                scrollButtons: {
-                    enable: true
-                },
-                theme: 'dark-thick',
-                contentTouchScroll: true
-            });
-
-        })(jQuery);
-        var jsonData = [
-            {
-                "text": "Services",
-                "children": services
-            },
-            {
-                "text": "Destinations",
-                "children": destinations
-            }
-        ];
-        function buildTree($parent, data) {
-            $.each(data, function (index, item) {
-                var $li = $("<li></li>");
-                var $checkbox = $("<input type='checkbox' class='node-checkbox'>");
-                var $a = $("<a>" + item.text + "</a>");
-
-                if (item.children && item.children.length > 0) {
-                    $li.append($checkbox);
-                    $li.append($a);
-                    var $ul = $("<ul></ul>");
-                    $li.append($ul);
-                    buildTree($ul, item.children);
-                    $a.prepend("<span class='glyphicon glyphicon-chevron-right'></span>");
-                } else {
-                    $li.append($checkbox);
-                    $li.append($a);
-                }
-
-                $parent.append($li);
-            });
-        }
-
-        function getCheckedHierarchy() {
-            var hierarchy = {};
-
-            function traverse(node, obj) {
-                var text = node.text();
-                obj[text] = {};
-                node.siblings("ul").children("li").each(function () {
-                    var checkbox = $(this).children(".node-checkbox");
-                    if (checkbox.prop("checked")) {
-                        traverse($(this).children("a"), obj[text]);
-                    }
-                });
-            }
-
-            $("#treeview > li").each(function () {
-                var checkbox = $(this).children(".node-checkbox");
-                if (checkbox.prop("checked")) {
-                    traverse($(this).children("a"), hierarchy);
-                }
-            });
-
-            return hierarchy;
-        }
-
-        function updateOutput() {
-            var hierarchy = getCheckedHierarchy();
-            $("#output").text(JSON.stringify(hierarchy, null, 2));
-
-            // Handle leaf nodes
-            $("#treeview > li").each(function () {
-                var $parentLi = $(this);
-                var $checkboxes = $parentLi.find(".node-checkbox");
-                var isChecked = $checkboxes.filter(":checked").length === $checkboxes.length;
-                $parentLi.children(".node-checkbox").prop("checked", isChecked);
-                if (isChecked && $parentLi.find("ul").length === 0) {
-                    var text = $parentLi.find("a").text();
-                    var parentText = $parentLi.parent().closest("li").find("a").text();
-                    if (!hierarchy[parentText]) {
-                        hierarchy[parentText] = [];
-                    }
-                    hierarchy[parentText].push(text);
-                }
-            });
-            var checkedCheckboxes = getLeafNodeValues();
-            updateMap(checkedCheckboxes)
-        }
-        async function fetchDestinationData() {
-            try {
-                const response = await fetch(geoserver_destination_url);
-                const data = await response.json();
-                return data.features || [];
-            } catch (error) {
-                console.error("Error fetching destination data:", error);
-                return [];
-            }
-        }
-
-        async function fetchServiceData() {
-            try {
-                const response = await fetch(geoserver_service_url);
-                const data = await response.json();
-                return data.features || [];
-            } catch (error) {
-                console.error("Error fetching service data:", error);
-                return [];
-            }
-        }
-        const markerIcon = new ol.style.Icon({
-            src: '{% static "images/marker-icon.png"%}', // Replace with the path to your marker image
-            anchor: [0.5, 1], // Center the icon on the feature's coordinates
-            scale: 0.5, // Adjust the scale as needed
-        });
-        function createMarkerStyle(feature) {
-            return new ol.style.Style({
-                image: markerIcon,
-            });
-        }
-
-        async function addFeaturesToVectorSource(vectorSource, data, checkedCheckboxes) {
-            data.forEach(function (destinationFeature) {
-                const splitId = destinationFeature.id.split('.');
-                const isDestinations = splitId[0] === 'destinations';
-                const full_name = isDestinations
-                    ? destinationFeature.properties.Full_Name
-                    : destinationFeature.properties.full_name;
-                const wereda = isDestinations
-                    ? destinationFeature.properties.Wereda
-                    : destinationFeature.properties.wereda;
-
-                if (checkedCheckboxes.includes(full_name)) {
-                    const coordinates = isDestinations
-                        ? destinationFeature.geometry.coordinates
-                        : destinationFeature.geometry.coordinates[0];
-
-                    const feature = new ol.Feature({
-                        geometry: new ol.geom.Point([coordinates[0], coordinates[1]]),
-                        name: full_name,
-                        wereda: wereda
-
-                    });
-
-                    // Set the marker style for the feature
-                    feature.setStyle(createMarkerStyle(feature));
-
-                    vectorSource.addFeature(feature);
-                }
-            });
-        }
-
-        async function updateMap(checkedCheckboxes, padding = 1) {
-            const vectorSource = new ol.source.Vector(); // Create an empty vector source
-
-            const vectorLayer = new ol.layer.Vector({
-                source: vectorSource
-            });
-
-            map.getLayers().forEach(function (layer) {
-                if (layer instanceof ol.layer.Vector) {
-                    map.removeLayer(layer);
-                }
-            });
-
-            const destinationData = await fetchDestinationData();
-            addFeaturesToVectorSource(vectorSource, destinationData, checkedCheckboxes);
-            const serviceData = await fetchServiceData();
-            addFeaturesToVectorSource(vectorSource, serviceData, checkedCheckboxes);
-
-            // Calculate the extent of all features in the vector source
-            const extent = vectorSource.getExtent();
-
-            // Add padding to the extent
-            const paddedExtent = ol.extent.buffer(extent, padding);
-
-            // Animate the map view to the padded extent
-            map.getView().fit(paddedExtent, map.getSize(), { duration: 1500 });
-
-            map.addLayer(vectorLayer);
-        }
-
-
-        $(document).ready(function () {
-            buildTree($("#treeview"), jsonData);
-            $("#treeview ul").hide();
-
-            $("#treeview a").click(function (e) {
-                e.preventDefault();
-                // Find the associated ul element and toggle its visibility
-                var $ul = $(this).siblings("ul");
-                $ul.toggle();
-
-                // Toggle the glyphicon-chevron-right and glyphicon-chevron-down classes
-                var $icon = $(this).find("span.glyphicon");
-                if ($icon.hasClass("glyphicon-chevron-right")) {
-                    $icon.removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
-                } else {
-                    $icon.removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
-                }
-            });
-            $("#treeview .node-checkbox").change(function () {
-                var isChecked = $(this).prop("checked");
-                var $parentLi = $(this).closest("li");
-                $parentLi.find(".node-checkbox").prop("checked", isChecked);
-                updateOutput();
-
-            });
-
-            $("#treeview ul").hide();
-        });
-        function getLeafNodeValues() {
-            var leafNodeValues = [];
-            $("#treeview .node-checkbox:checked").each(function () {
-                var $parentLi = $(this).closest("li");
-                if ($parentLi.children("ul").length === 0) {
-                    leafNodeValues.push($(this).next("a").text()); // Store the label text of the checked leaf node
-                }
-            });
-            return leafNodeValues;
-        }
-        const popup = new ol.Overlay({
-            element: document.getElementById('popup'),
-            positioning: 'bottom-center',
-            stopEvent: false,
-            offset: [0, -10], // Offset the popup slightly above the clicked point
-        });
-        map.addOverlay(popup);
-        function displayFeatureInfo(coordinate, content) {
-            popup.setPosition(coordinate);
-            document.getElementById('popup-content').innerHTML = content;
-            popup.getElement().style.display = 'block';
-        }
-        map.on('click', function (event) {
-            map.forEachFeatureAtPixel(event.pixel, function (feature) {
-                // Get the feature's properties or any data you want to display
-                const properties = feature.getProperties();
-                console.log(properties)
-                // Format the feature data for display in the popup
-                const content = `
-            <h3>${properties.name}</h3>
-            <p>Other information: ${properties.wereda}</p>
-            <!-- Add more properties here as need->ed -
-        `;
-
-                // Display the feature data in the popup
-                displayFeatureInfo(event.coordinate, content);
-            });
-        });
-
-
     </script>
+    
+    
+ 
 </body>
 
 </html>

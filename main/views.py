@@ -109,8 +109,31 @@ def index(request):
     destinations_data_dict = json.loads(destinations_data)
     context['services']=json.dumps(getFrontData(getServiceMap(services_data_dict)), indent=4) 
     context['destinations']=json.dumps(getFrontData(getDestinationMap(destinations_data_dict)), indent=4)  
-    # print(context['destinations'])    
-    return render(request,'main/index1.html',context)
+    combined_data = {
+    'services':services ,
+    'destinations': destinations
+    }
+    combined_data_autocomplete = {
+    'services': [],
+    'destinations': []
+    }
+
+    # Extracting services data
+    for service in services_data_dict:
+        service_dict = {
+            'full_name': service['fields']['full_name']
+        }
+        combined_data_autocomplete['services'].append(service_dict)
+
+    # Extracting destinations data
+    for destination in destinations_data_dict:
+        destination_dict = {
+            'full_name': destination['fields']['full_name']
+        }
+        combined_data_autocomplete['destinations'].append(destination_dict)
+    context['combined_data'] = combined_data
+    context['combined_data_autocomplete'] = combined_data_autocomplete
+    return render(request,'main/index.html',context)
 
 
 
