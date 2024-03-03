@@ -121,18 +121,66 @@ def index(request):
     # Extracting services data
     for service in services_data_dict:
         service_dict = {
-            'full_name': service['fields']['full_name']
+             'id': service['pk'],
+            'geom': service['fields']['geom'],
+            'objectid': service['fields']['objectid'],
+            'x': service['fields']['x'],
+            'y': service['fields']['y'],
+            'z': service['fields']['z'],
+            'code': service['fields']['code'],
+            'full_name': service['fields']['full_name'],
+            'short_name': service['fields']['short_name'],
+            'zone': service['fields']['zone'],
+            'wereda': service['fields']['wereda'],
+            'kebele': service['fields']['kebele'],
+            'phone_line': service['fields']['phone_line'],
+            'email': service['fields']['email'],
+            'website': service['fields']['website'],
+            'service_ty': service['fields']['service_ty'],
+            'owner_name': service['fields']['owner_name'],
+            'moto': service['fields']['moto']
+
         }
         combined_data_autocomplete['services'].append(service_dict)
 
     # Extracting destinations data
     for destination in destinations_data_dict:
         destination_dict = {
-            'full_name': destination['fields']['full_name']
+        'id': destination['pk'],
+        'geom': destination['fields']['geom'],
+        'objectid': destination['fields']['objectid'],
+        'name': destination['fields']['name'],
+        'datetimes': destination['fields']['datetimes'],
+        'elevation': destination['fields']['elevation'],
+        'code': destination['fields']['code'],
+        'full_name': destination['fields']['full_name'],
+        'short_name': destination['fields']['short_name'],
+        'zone': destination['fields']['zone'],
+        'wereda': destination['fields']['wereda'],
+        'kebele': destination['fields']['kebele'],
+        'locality_n': destination['fields']['locality_n'],
+        'organizati': destination['fields']['organizati'],
+        'destinatio': destination['fields']['destinatio'],
+        'status': destination['fields']['status'],
+        'area_sqkm': destination['fields']['area_sqkm'],
+        'yearly_est': destination['fields']['yearly_est'],
+        'unesco_reg': destination['fields']['unesco_reg'],
+        'descriptio': destination['fields']['descriptio'],
+        'photo_no': destination['fields']['photo_no'],
+        'photo_loca': destination['fields']['photo_loca'],
+        'site_des_a': destination['fields']['site_des_a'],
+        'amharic': destination['fields']['amharic'],
+        'english': destination['fields']['english'],
+        'x': destination['fields']['x'],
+        'y': destination['fields']['y'],
+        'image1': destination['fields']['image1'],
+        'image2': destination['fields']['image2']
+            
+
         }
         combined_data_autocomplete['destinations'].append(destination_dict)
     context['combined_data'] = combined_data
-    context['combined_data_autocomplete'] = combined_data_autocomplete
+    context['combined_data_autocomplete'] = json.dumps(combined_data_autocomplete)
     return render(request,'main/index.html',context)
 
 

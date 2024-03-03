@@ -19,14 +19,35 @@
     <link rel="stylesheet" href="{% static 'jquery-ui.css' %}">
 
 <style>
+    .property-overlay {
+        position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 18px;
+  max-width: 568px;
+  overflow-x: scroll;
+}
+
+.property-overlay span.close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+    #pills-tabContent{
+        height: 100vh;
+    }
  .tree-view {
         list-style: none;
-    }
+        overflow-y: scroll;
+  height: 100vh;
 
-    .tree-view li {
-        margin-left: 20px;
-        position: relative;
     }
+.form-control{
+    width: 30%;
+}
+ 
 
     .tree-view li.collapsible > ul {
         display: none;
@@ -102,15 +123,118 @@
                                 <label for="step1">Services</label>
                         
                                 <ul id="step1" class="collapse">
-                                   
+                                  
+
                                     {% for service_info in combined_data.services|get_distinct_service_ty_info %}
                                     <li>
                                         <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#{{ service_info.service_type }}"></span>
-                                        <input type="checkbox" id="{{ service_info.service_type }}" data-x="{{ obj.x }}" data-y="{{ obj.y }}"> <label for="{{ service_info.service_type }}">{{ service_info.service_type }}</label> ({{ service_info.count }})
+                                        <input type="checkbox" id="{{ service_info.service_type }}" data-x="{{ obj.x }}" data-y="{{ obj.y }}"> <label for="{{ service_info.service_type }}">{{ service_info.service_type }}</label>
+                                        {% if service_info.service_type == "Air Port" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Bank" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Beverage" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Bus Terminal" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Café" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Camp Site" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Catholic Church" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Clinic" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "College" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Garage" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Gas Station" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Health Center" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Health Post" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Hospital" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Hotel" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Lodge" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Mosque" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Municipal" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Museum" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Office" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Open Market" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Orthodox Church" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Pension" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Pharmacy" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Police Station" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Protestant Church" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "Repair" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Restaurant" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "School" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Stadium" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% elif service_info.service_type == "Supper Market" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+{% elif service_info.service_type == "University" %}
+<i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+
+{% endif %}
                                         <ul id="{{ service_info.service_type }}" class="collapse">
                                             {% for obj in service_info.objects %}
                                                 <li>
-                                                    <input type="checkbox" id="{{ obj.id }}" data-x="{{ obj.x }}" data-y="{{ obj.y }}"> <label for="{{ obj.id }}" style="font-size: 13px;">{{ obj.full_name }}</label>
+                                                    <input type="checkbox" id="{{ obj.id }}" 
+                                                    data-whatType="services" 
+                                                    data-geom="{{ obj.geom }}" 
+     data-objectid="{{ obj.objectid }}" 
+     data-x="{{ obj.x }}" 
+     data-y="{{ obj.y }}"
+     data-z="{{ obj.z }}"
+     data-code="{{ obj.code }}"
+     data-full_name="{{ obj.full_name }}"
+     data-short_name="{{ obj.short_name }}"
+     data-zone="{{ obj.zone }}"
+     data-wereda="{{ obj.wereda }}"
+     data-kebele="{{ obj.kebele }}"
+     data-phone_line="{{ obj.phone_line }}"
+     data-email="{{ obj.email }}"
+     data-website="{{ obj.website }}"
+     data-service_ty="{{ obj.service_ty }}"
+     data-owner_name="{{ obj.owner_name }}"
+     data-moto="{{ obj.moto }}"
+     > <label for="{{ obj.id }}" style="font-size: 13px;">{{ obj.full_name }}</label>
                                                 </li>
                                             {% endfor %}
                                         </ul>
@@ -132,39 +256,48 @@
                                         <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#{{ destibnation_info.destinatio }}"></span>
                                         <input type="checkbox" 
                                         id="{{ destibnation_info.destinatio }}" 
-                                        data-geom="{{ destibnation_info.geom }}" 
-                                        data-objectid="{{ destibnation_info.objectid }}" 
-                                        data-name="{{ destibnation_info.name }}" 
-                                        data-datetimes="{{ destibnation_info.datetimes }}" 
-                                        data-elevation="{{ destibnation_info.elevation }}" 
-                                        data-code="{{ destibnation_info.code }}" 
-                                        data-full_name="{{ destibnation_info.full_name }}" 
-                                        data-short_name="{{ destibnation_info.short_name }}" 
-                                        data-zone="{{ destibnation_info.zone }}" 
-                                        data-wereda="{{ destibnation_info.wereda }}" 
-                                        data-kebele="{{ destibnation_info.kebele }}" 
-                                        data-locality_n="{{ destibnation_info.locality_n }}" 
-                                        data-organizati="{{ destibnation_info.organizati }}" 
-                                        data-destinatio="{{ destibnation_info.destinatio }}" 
-                                        data-status="{{ destibnation_info.status }}" 
-                                        data-area_sqkm="{{ destibnation_info.area_sqkm }}" 
-                                        data-yearly_est="{{ destibnation_info.yearly_est }}" 
-                                        data-unesco_reg="{{ destibnation_info.unesco_reg }}" 
-                                        data-descriptio="{{ destibnation_info.descriptio }}" 
-                                        data-photo_no="{{ destibnation_info.photo_no }}" 
-                                        data-photo_loca="{{ destibnation_info.photo_loca }}" 
-                                        data-site_des_a="{{ destibnation_info.site_des_a }}" 
-                                        data-amharic="{{ destibnation_info.amharic }}" 
-                                        data-english="{{ destibnation_info.english }}" 
-                                        data-x="{{ destibnation_info.x }}" 
-                                        data-y="{{ destibnation_info.y }}" 
-                                        data-image1="{{ destibnation_info.image1 }}" 
-                                        data-image2="{{ destibnation_info.image2 }}">    
-                                        <label for="{{ destibnation_info.destinatio }}">{{ destibnation_info.destination_type }}</label> ({{ destibnation_info.count }})                                    
+                                       >{{ destibnation_info.destination_type }}</label>
+                                        {% if destibnation_info.destination_type == "Cultural" %}
+                                        <i class="bi bi-person-hearts"></i>  {% elif destibnation_info.destination_type == "Man Made" %}
+                                        <i class="bi bi-person-hearts"></i>  {% elif destibnation_info.destination_type == "Natural" %}
+                                        <i class="bi bi-person-hearts"></i>  {% endif %}
+                                        ({{ destibnation_info.count }})                                    
                                         <ul id="{{ destibnation_info.destinatio }}" class="collapse">
                                             {% for obj in destibnation_info.objects %}
+                                            {{obj.full}}
                                                 <li>
-                                                    <input type="checkbox" id="{{ obj.id }}" data-x="{{ obj.x }}" data-y="{{ obj.y }}"> <label for="{{ obj.id }}" style="font-size: 13px;">{{ obj.full_name }}</label>
+                                                    <input type="checkbox" id="{{ obj.id }}" 
+                                                    data-whatType="destinations" 
+                                                    data-geom="{{ obj.geom }}" 
+                                                    data-objectid="{{ obj.objectid }}" 
+                                                    data-name="{{ obj.name }}" 
+                                                    data-datetimes="{{ obj.datetimes }}" 
+                                                    data-elevation="{{ obj.elevation }}" 
+                                                    data-code="{{ obj.code }}" 
+                                                    data-full_name="{{ obj.full_name }}" 
+                                                    data-short_name="{{ obj.short_name }}" 
+                                                    data-zone="{{ obj.zone }}" 
+                                                    data-wereda="{{ obj.wereda }}" 
+                                                    data-kebele="{{ obj.kebele }}" 
+                                                    data-locality_n="{{ obj.locality_n }}" 
+                                                    data-organizati="{{ obj.organizati }}" 
+                                                    data-destinatio="{{ obj.destinatio }}" 
+                                                    data-status="{{ obj.status }}" 
+                                                    data-area_sqkm="{{ obj.area_sqkm }}" 
+                                                    data-yearly_est="{{ obj.yearly_est }}" 
+                                                    data-unesco_reg="{{ obj.unesco_reg }}" 
+                                                    data-descriptio="{{ obj.descriptio }}" 
+                                                    data-photo_no="{{ obj.photo_no }}" 
+                                                    data-photo_loca="{{ obj.photo_loca }}" 
+                                                    data-site_des_a="{{ obj.site_des_a }}" 
+                                                    data-amharic="{{ obj.amharic }}" 
+                                                    data-english="{{ obj.english }}" 
+                                                    data-x="{{ obj.x }}" 
+                                                    data-y="{{ obj.y }}" 
+                                                    data-image1="{{ obj.image1 }}" 
+                                                    data-image2="{{ obj.image2 }}">    
+                                                    <label for="{{ obj.destinatio }}"
+                                                    > <label for="{{ obj.id }}" style="font-size: 13px;">{{ obj.full_name }}</label>
                                                 </li>
                                             {% endfor %}
                                         </ul>
@@ -189,21 +322,40 @@
             </div>
             <div class="col-9">
                 <div id="map-canvas"></div>
+                <div id="property-overlay" class="property-overlay" style="display: none;">
+                    <b>Service Properties</b><br>
+                    Name:<span id="full_name-label"></span><br>
+  Zone:<span id="zone-label"></span><br>
+  Wereda:<span id="wereda-label"></span><br>
+  Kebele:<span id="kebele-label"></span><br>
+  Phone:<span id="phone_line-label"></span><br>
+  Email:<span id="email-label"></span><br>
+  Service Type:<span id="service_ty-label"></span><br>
+  Owner Name<span id="owner_name-label"></span><br>
+  Moto:<span id="moto-label"></span><br>
+                    </div>
+                    <div id="property-overlay2" class="property-overlay" style="display: none;">
+                        <b>Destination Properties</b><br>
+                        Name: <span id="zone-label2"></span><br>
+                        Zone:<span id="wereda-label2"></span><br>
+                        Wereda:<span id="kebele-label2"></span><br>
+                        Kebele:<span id="destinatio-label2"></span><br>
+                        Area in KM square:<span id="area_sqkm-label2"></span><br>
+                        Establishment Year:<span id="yearly_est-label2"></span><br>
+                        UNESCO Registration<span id="unesco_reg-label2"></span><br>
+                        <span id="photo_no-label2"></span><br>
+                        <span id="photo_loca-label2"></span><br>
+                        Amharic Description:<span id="amharic-label2"></span><br>
+                        English Description<span id="english-label2"></span><br>
+                        <img id="image1-label2" src=""></img><br>
+                        <img id="image2-label2" src=""></img><br>
+                        </div>
 
             </div>
 
         </div>
     </div>
-    <div id="popup" class="ol-popup">
-        <div class="popup-card">
-            <div class="popup-header">
-                <span id="popup-closer" class="ol-popup-closer">×</span>
-            </div>
-            <div class="popup-content" id="popup-content">
-                <!-- Feature data will be inserted here -->
-            </div>
-        </div>
-    </div>
+   
     <script src="{% static 'b5/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/jquery-1.10.2.min.js'%}"></script>
 
@@ -211,36 +363,406 @@
     <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
     <script src="{% static 'jquery-ui.js' %}"></script>
     <script>
-        $(function() {
-            var combinedData = "{{ combined_data_autocomplete|safe }}";
+      $(function() {
+  var combinedData = JSON.parse("{{ combined_data_autocomplete|escapejs }}");
 
-    var combinedData = {
-        services: [
-            { full_name: "Service 1", },
-            { full_name: "Service 2" },
-            // Add more service objects as needed
-        ],
-        destinations: [
-            { full_name: "Destination 1" },
-            { full_name: "Destination 2" },
-            // Add more destination objects as needed
-        ]
-    };
+  var availableTags = [];
+  // Combine service and destination full names into a single array
+  combinedData.services.forEach(function(service) {
+      availableTags.push({ label: service.full_name, value: service.full_name,
+       whattype:"services",
+      geom: service.geom, 
+                    objectid: service.objectid, 
+                    x: service.x, 
+                    y: service.y, 
+                    z: service.z, 
+                    code: service.code, 
+                    full_name: service.full_name,
+                    short_name: service.short_name, 
+                    zone: service.zone,
+                     wereda: service.wereda, 
+                     kebele: service.kebele, 
+                     phone_line: service.phone_line,
+                      email: service.email, 
+                      website: service.website, 
+                      service_ty: service.service_ty,
+                       owner_name: service.owner_name, 
+                       moto: service.moto
+      
+    });
+  });
+  combinedData.destinations.forEach(function(destination) {
+      availableTags.push({ label: destination.full_name, value: destination.full_name,
+        whattype:"destinations",
+      geom: destination.geom,
+    objectid: destination.objectid,
+    name: destination.name,
+    datetimes: destination.datetimes,
+    elevation: destination.elevation,
+    code: destination.code,
+    full_name: destination.full_name,
+    short_name: destination.short_name,
+    zone: destination.zone,
+    wereda: destination.wereda,
+    kebele: destination.kebele,
+    locality_n: destination.locality_n,
+    organizati: destination.organizati,
+    destinatio: destination.destinatio,
+    status: destination.status,
+    area_sqkm: destination.area_sqkm,
+    yearly_est: destination.yearly_est,
+    unesco_reg: destination.unesco_reg,
+    descriptio: destination.descriptio,
+    photo_no: destination.photo_no,
+    photo_loca: destination.photo_loca,
+    site_des_a: destination.site_des_a,
+    amharic: destination.amharic,
+    english: destination.english,
+    x: destination.x,
+    y: destination.y,
+    image1: destination.image1,
+    image2: destination.image2  });
+  });
+  var pointLayer; // Declare pointLayer outside the select event handler to maintain reference
+  $("#autocomplete-input").autocomplete({
+    source: availableTags,
+    select: function(event, ui) {
+        // Clear previous pointLayer if exists
+        if (pointLayer) {
+            map.removeLayer(pointLayer);
+        }
+console.log(ui.item)
+        // Get the selected item data
+        var selectedItem = ui.item;
 
-    var availableTags = [];
-    // Combine service and destination full names into a single array
-    combinedData.services.forEach(function(service) {
-        availableTags.push(service.full_name);
-    });
-    combinedData.destinations.forEach(function(destination) {
-        availableTags.push(destination.full_name);
+// Check if x and y coordinates exist
+if (selectedItem.hasOwnProperty('x') && selectedItem.hasOwnProperty('y')) {
+    var pointFeature = new ol.Feature();
+
+    if(selectedItem.whattype=="services"){
+        
+pointFeature.setGeometry(new ol.geom.Point([selectedItem.x, selectedItem.y]));
+pointFeature.set('whattype', 'services');
+pointFeature.set('geom', selectedItem.geom);
+pointFeature.set('objectid', selectedItem.objectid);
+pointFeature.set('x', selectedItem.x);
+pointFeature.set('y', selectedItem.y);
+pointFeature.set('z', selectedItem.z);
+pointFeature.set('code', selectedItem.code);
+pointFeature.set('full_name', selectedItem.full_name);
+pointFeature.set('short_name', selectedItem.short_name);
+pointFeature.set('zone', selectedItem.zone);
+pointFeature.set('wereda', selectedItem.wereda);
+pointFeature.set('kebele', selectedItem.kebele);
+pointFeature.set('phone_line', selectedItem.phone_line);
+pointFeature.set('email', selectedItem.email);
+pointFeature.set('website', selectedItem.website);
+pointFeature.set('service_ty', selectedItem.service_ty);
+pointFeature.set('owner_name', selectedItem.owner_name);
+pointFeature.set('moto', selectedItem.moto);
+
+   
+  
+    }
+    if(selectedItem.whattype=="destinations"){
+        
+pointFeature.setGeometry(new ol.geom.Point([selectedItem.x, selectedItem.y]));
+pointFeature.set('whattype', 'destinations');
+pointFeature.set('geom', selectedItem.geom);
+pointFeature.set('objectid', selectedItem.objectid);
+pointFeature.set('name', selectedItem.name);
+pointFeature.set('datetimes', selectedItem.datetimes);
+pointFeature.set('elevation', selectedItem.elevation);
+pointFeature.set('code', selectedItem.code);
+pointFeature.set('full_name', selectedItem.full_name);
+pointFeature.set('short_name', selectedItem.short_name);
+pointFeature.set('zone', selectedItem.zone);
+pointFeature.set('wereda', selectedItem.wereda);
+pointFeature.set('kebele', selectedItem.kebele);
+pointFeature.set('locality_n', selectedItem.locality_n);
+pointFeature.set('organizati', selectedItem.organizati);
+pointFeature.set('destinatio', selectedItem.destinatio);
+pointFeature.set('status', selectedItem.status);
+pointFeature.set('area_sqkm', selectedItem.area_sqkm);
+pointFeature.set('yearly_est', selectedItem.yearly_est);
+pointFeature.set('unesco_reg', selectedItem.unesco_reg);
+pointFeature.set('descriptio', selectedItem.descriptio);
+pointFeature.set('photo_no', selectedItem.photo_no);
+pointFeature.set('photo_loca', selectedItem.photo_loca);
+pointFeature.set('site_des_a', selectedItem.site_des_a);
+pointFeature.set('amharic', selectedItem.amharic);
+pointFeature.set('english', selectedItem.english);
+pointFeature.set('x', selectedItem.x);
+pointFeature.set('y', selectedItem.y);
+pointFeature.set('image1', selectedItem.image1);
+pointFeature.set('image2', selectedItem.image2);
+
+    }
+  
+
+    // Create a vector layer to hold the point feature
+    pointLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: [pointFeature],
+            
+        }),
+        style:new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({color: "yellow"}),
+                stroke: new ol.style.Stroke({color: "red", width: 2})
+            })
+        })
     });
 
-    $("#autocomplete-input").autocomplete({
-        source: availableTags
+    // Add the point layer to the map
+    map.addLayer(pointLayer);
+
+    // Get the current zoom level
+    var currentZoom_ = map.getView().getZoom();
+
+    // Set the center of the map to the selected point
+    var center = [selectedItem.x, selectedItem.y];
+    map.getView().animate({
+        center: center,
+        zoom: currentZoom_ + 2, // You can adjust the zoom level here
+        duration: 1000 // Duration of the animation in milliseconds
     });
+
+        } else {
+            console.warn("Selected item doesn't have x and y coordinates");
+        }
+    }
 });
-        // Function to add markers to the map based on coordinates
+});
+const service_styles = [
+{
+name: "Air Port",
+fill: "#3fa6f2",
+stroke: "#9d5c9e"
+},
+{
+name: "Bank",
+fill: "#7dc1eb",
+stroke: "#a187c6"
+},
+{
+name: "Beverage",
+fill: "#bc8a3b",
+stroke: "#c3cb79"
+},
+{
+name: "Bus Terminal",
+fill: "#dba71b",
+stroke: "#69d5c1"
+},
+{
+name: "Café",
+fill: "#f284ad",
+stroke: "#f5b0cc"
+},
+{
+name: "Camp Site",
+fill: "#79a855",
+stroke: "#b1b9a9"
+},
+{
+name: "Catholic Church",
+fill: "#5a57bc",
+stroke: "#e84b2e"
+},
+{
+name: "Clinic",
+fill: "#eb9b33",
+stroke: "#2fd49d"
+},
+{
+name: "College",
+fill: "#b7a54e",
+stroke: "#9a3f4d"
+},
+{
+name: "Garage",
+fill: "#cd6f8d",
+stroke: "#f78e8b"
+},
+{
+name: "Gas Station",
+fill: "#ac6ac7",
+stroke: "#d4c1ee"
+},
+{
+name: "Health Center",
+fill: "#79ad9e",
+stroke: "#b2a65c"
+},
+{
+name: "Health Post",
+fill: "#e09a6d",
+stroke: "#dc6dd1"
+},
+{
+name: "Hospital",
+fill: "#62928d",
+stroke: "#ec5f98"
+},
+{
+name: "Hotel",
+fill: "#d5a655",
+stroke: "#768c69"
+},
+{
+name: "Lodge",
+fill: "#c56d62",
+stroke: "#da9f66"
+},
+{
+name: "Mosque",
+fill: "#7d5ecf",
+stroke: "#57b6af"
+},
+{
+name: "Municipal",
+fill: "#c77864",
+stroke: "#c4e79a"
+},
+{
+name: "Museum",
+fill: "#62c680",
+stroke: "#b5527e"
+},
+{
+name: "Office",
+fill: "#6bb0f0",
+stroke: "#c6736f"
+},
+{
+name: "Open Market",
+fill: "#d5d762",
+stroke: "#cc4aa5"
+},
+{
+name: "Orthodox Church",
+fill: "#d2699d",
+stroke: "#81dd6d"
+},
+{
+name: "Pension",
+fill: "#e2e55c",
+stroke: "#5bcff1"
+},
+{
+name: "Pharmacy",
+fill: "#d766c9",
+stroke: "#76856a"
+},
+{
+name: "Police Station",
+fill: "#669ecf",
+stroke: "#b67667"
+},
+{
+name: "Protestant Church",
+fill: "#e0d25e",
+stroke: "#5c85d2"
+},
+{
+name: "Repair",
+fill: "#61d49d",
+stroke: "#e27298"
+},
+{
+name: "Restaurant",
+fill: "#cc858f",
+stroke: "#98bd5f"
+},
+{
+name: "School",
+fill: "#7bd64e",
+stroke: "#d452a8"
+},
+{
+name: "Stadium",
+fill: "#6587c7",
+stroke: "#f7905a"
+},
+{
+name: "Super Market",
+fill: "#bc69e0",
+stroke: "#5c8d60"
+},
+{
+name: "University",
+fill: "#e16a73",
+stroke: "#68a363"
+}
+]
+
+const destination_styles = [
+{
+name: "Cultural",
+fill: "#5fccc",
+stroke: "#6ffc9e"
+},
+{
+name: "Man Made",
+fill: "#7a899",
+stroke: "blue"
+},
+{
+name: "Natural",
+fill: "#32ccc",
+stroke: "red"
+},
+]
+
+function getDynamicStyle(coord) {
+    if(coord.whattype=="services"){
+        const service_style = service_styles.find(style => style.name === coord.service_ty);
+    
+    if(service_style){
+        return new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({color: service_style.fill}),
+                stroke: new ol.style.Stroke({color: service_style.stroke, width: 2})
+            })
+        });
+    }
+    // If no matching style found, return a default style
+    return new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 6,
+            fill: new ol.style.Fill({color: 'gray'}),
+            stroke: new ol.style.Stroke({color: 'black', width: 2})
+        })
+    })
+    }
+
+    if(coord.whattype=="destinations"){
+        const destination_style = destination_styles.find(style => style.name === coord.destinatio);
+    
+    if(destination_style){
+        return new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({color: destination_style.fill}),
+                stroke: new ol.style.Stroke({color: destination_style.stroke, width: 2})
+            })
+        });
+    }
+    // If no matching style found, return a default style
+    return new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 6,
+            fill: new ol.style.Fill({color: 'gray'}),
+            stroke: new ol.style.Stroke({color: 'black', width: 2})
+        })
+    })
+    }
+
+}
+// Function to add markers to the map based on coordinates
         function addMarkersToMap(coordinates) {
             // Remove previous markers
             map.getLayers().forEach(layer => {
@@ -248,23 +770,125 @@
                     map.removeLayer(layer);
                 }
             });
-    
+            
+
+        
+
+        // Create a style function
+        function styleFunction(coord) {
+           
+            if(coord.whattype=="services"){
+                return getDynamicStyle(coord)
+
+            }
+            if(coord.whattype=="destinations"){
+                return getDynamicStyle(coord)
+            }
+            // Condition to apply different styles
+           
+        };
+
             // Create a vector layer for markers
             var markerLayer = new ol.layer.Vector({
                 name: 'markers',
                 source: new ol.source.Vector(),
+                 
             });
     
             // Add markers to the layer
             coordinates.forEach(coord => {
-                var marker = new ol.Feature({
-                    geometry: new ol.geom.Point([coord.x, coord.y])
+                if(coord.whattype=="services"){
+                    var marker = new ol.Feature({
+                    geometry:  new ol.geom.Point([coord.x, coord.y]),
+                    whattype: "services",
+                    geom: coord.geom, 
+                    objectid: coord.objectid, 
+                    x: coord.x, 
+                    y: coord.y, 
+                    z: coord.z, 
+                    code: coord.code, 
+                    full_name: coord.full_name,
+                    short_name: coord.short_name, 
+                    zone: coord.zone,
+                     wereda: coord.wereda, 
+                     kebele: coord.kebele, 
+                     phone_line: coord.phone_line,
+                      email: coord.email, 
+                      website: coord.website, 
+                      service_ty: coord.service_ty,
+                       owner_name: coord.owner_name, 
+                       moto: coord.moto
                 });
+                marker.setStyle(styleFunction(coord))
                 markerLayer.getSource().addFeature(marker);
+                }
+                if(coord.whattype=="destinations"){
+                    var marker = new ol.Feature({
+                    geometry:  new ol.geom.Point([coord.x, coord.y]),
+                    geom: coord.geom,
+                    whattype: "destinations",
+    objectid: coord.objectid,
+    name: coord.name,
+    datetimes: coord.datetimes,
+    elevation: coord.elevation,
+    code: coord.code,
+    full_name: coord.full_name,
+    short_name: coord.short_name,
+    zone: coord.zone,
+    wereda: coord.wereda,
+    kebele: coord.kebele,
+    locality_n: coord.locality_n,
+    organizati: coord.organizati,
+    destinatio: coord.destinatio,
+    status: coord.status,
+    area_sqkm: coord.area_sqkm,
+    yearly_est: coord.yearly_est,
+    unesco_reg: coord.unesco_reg,
+    descriptio: coord.descriptio,
+    photo_no: coord.photo_no,
+    photo_loca: coord.photo_loca,
+    site_des_a: coord.site_des_a,
+    amharic: coord.amharic,
+    english: coord.english,
+    x: coord.x,
+    y: coord.y,
+    image1: coord.image1,
+    image2: coord.image2
+                });
+                marker.setStyle(styleFunction(coord))
+                markerLayer.getSource().addFeature(marker);
+                }
+                
+                
             });
     
             // Add the marker layer to the map
             map.addLayer(markerLayer);
+            function getFeaturesExtent(vectorLayer) {
+            let extent = null;
+            vectorLayer.getSource().forEachFeature(function(feature) {
+                const featureGeometry = feature.getGeometry();
+                const featureExtent = featureGeometry.getExtent();
+                if (!extent) {
+                extent = featureExtent.slice(); // Create a copy to avoid modification
+                } else {
+                extent = ol.extent.extend(extent, featureExtent);
+                }
+            });
+            return extent;
+            }
+            const featuresExtent = getFeaturesExtent(markerLayer);
+            const center = ol.extent.getCenter(featuresExtent);
+            
+         
+            map.getView().animate({
+            center:center,
+            extent: featuresExtent,
+            zoom: currentZoom + 5, 
+            duration: 500 // Set the desired animation duration
+
+            });
+
         }
     
         $(document).ready(function () {
@@ -283,11 +907,65 @@
                 $node.find(':checkbox:checked').each(function () {
                     var $checkbox = $(this);
                     if ($checkbox.siblings('ul').length === 0) {
-                        checkedLeafNodes.push({
-                            id: $checkbox.attr('id'),
-                            x: $checkbox.data('x'),
-                            y: $checkbox.data('y')
-                        });
+                        if($checkbox.data('whattype')=="services")
+                        {
+                            checkedLeafNodes.push({
+    id: $checkbox.attr('id'),
+    whattype: $checkbox.data('whattype'),
+    geom: $checkbox.data('geom'),
+    objectid: $checkbox.data('objectid'),
+    x: $checkbox.data('x'),
+    y: $checkbox.data('y'),
+    z: $checkbox.data('z'),
+    code: $checkbox.data('code'),
+    full_name: $checkbox.data('full_name'),
+    short_name: $checkbox.data('short_name'),
+    zone: $checkbox.data('zone'),
+    wereda: $checkbox.data('wereda'),
+    kebele: $checkbox.data('kebele'),
+    phone_line: $checkbox.data('phone_line'),
+    email: $checkbox.data('email'),
+    website: $checkbox.data('website'),
+    service_ty: $checkbox.data('service_ty'),
+    owner_name: $checkbox.data('owner_name'),
+    moto: $checkbox.data('moto')
+});
+                        }
+                        if($checkbox.data('whattype')=="destinations")
+                        {
+                            checkedLeafNodes.push({
+    id: $checkbox.attr('id'),
+    whattype: $checkbox.data('whattype'),
+    geom: $checkbox.data('geom'),
+    objectid: $checkbox.data('objectid'),
+    name: $checkbox.data('name'),
+    datetimes: $checkbox.data('datetimes'),
+    elevation: $checkbox.data('elevation'),
+    code: $checkbox.data('code'),
+    full_name: $checkbox.data('full_name'),
+    short_name: $checkbox.data('short_name'),
+    zone: $checkbox.data('zone'),
+    wereda: $checkbox.data('wereda'),
+    kebele: $checkbox.data('kebele'),
+    locality_n: $checkbox.data('locality_n'),
+    organizati: $checkbox.data('organizati'),
+    destinatio: $checkbox.data('destinatio'),
+    status: $checkbox.data('status'),
+    area_sqkm: $checkbox.data('area_sqkm'),
+    yearly_est: $checkbox.data('yearly_est'),
+    unesco_reg: $checkbox.data('unesco_reg'),
+    descriptio: $checkbox.data('descriptio'),
+    photo_no: $checkbox.data('photo_no'),
+    photo_loca: $checkbox.data('photo_loca'),
+    site_des_a: $checkbox.data('site_des_a'),
+    amharic: $checkbox.data('amharic'),
+    english: $checkbox.data('english'),
+    x: $checkbox.data('x'),
+    y: $checkbox.data('y'),
+    image1: $checkbox.data('image1'),
+    image2: $checkbox.data('image2')
+});
+                        }
                     }
                 });
     
@@ -345,7 +1023,143 @@
         });
     
         map.addControl(layerSwitcher);
-    </script>
+        var currentZoom = map.getView().getZoom();
+        map.on('singleclick', function (evt) {
+    map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+        if (feature) {
+            var properties = feature.getProperties();
+            var overlay = document.getElementById('property-overlay');
+            var overlay2 = document.getElementById('property-overlay2');
+            var closeBtn = document.createElement('span');
+            closeBtn.className = 'close-btn';
+            closeBtn.innerHTML = '&#10006;'; // Close icon (you can use an appropriate icon)
+
+
+           
+            for (var key in properties) {
+                if (properties.whattype == "services") {
+                    $(overlay).removeClass("d-none")
+                    $(overlay2).addClass("d-none")
+                    
+                    if (key === 'full_name' || key === 'zone' || key === 'wereda' || key === 'kebele' || key === 'phone_line' || key === 'email' || key === 'service_ty' || key === 'owner_name' || key === 'moto') {
+                        properties[key]==null?$("#"+key+"-label").text('-') :$("#"+key+"-label").text(properties[key]) 
+                    }
+                }
+                if (properties.whattype == "destinations") {
+                    $(overlay2).removeClass("d-none")
+                    $(overlay).addClass("d-none")
+                    if (key === 'full_name' || key === 'zone' || key === 'wereda' || key === 'kebele' || key === 'destinatio' || key === 'area_sqkm' || key === 'yearly_est' || key === 'unesco_reg' || key === 'photo_no' || key === 'photo_loca' || key === 'amharic' || key === 'english' ) {
+                        properties[key]==null||properties[key]=="None"?$("#"+key+"-label2").text('-') :$("#"+key+"-label2").text(properties[key]) 
+                    }
+                    if (key === 'image1' ) {
+                        if(properties[key]=="None"){
+                            properties[key]==null?$("#"+key+"-label2").text('-') :$("#"+key+"-label2").text('-') 
+
+                        }
+                        else{
+                            console.log(key)
+                            console.log($("#"+key+"-label2"))
+                            
+                            properties[key]==null?$("#"+key+"-label2").attr('src','/media/'+properties[key]) :$("#"+key+"-label2").attr('src','/media/'+properties[key])
+                            
+                        }
+                        }
+                        if (key === 'image2') {
+                       
+                       if(properties[key]=="None"){
+                        properties[key]==null?$("#"+key+"-label2").text('-') :$("#"+key+"-label2").text('-') 
+
+                       }
+                       else{
+                        properties[key]==null?$("#"+key+"-label2").attr('src','/media/'+properties[key]) :$("#"+key+"-label2").attr('src','/media/'+properties[key])
+
+                       }
+                       }
+                }
+            }
+
+           
+
+            // Add close button
+            overlay.appendChild(closeBtn);
+            overlay2.appendChild(closeBtn);
+
+            // Position the overlay beside the feature
+            var pixel = map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
+            var mapCanvas = document.getElementById('map-canvas');
+            overlay.style.left = (mapCanvas.offsetLeft + pixel[0] + 10) + 'px'; // Adjust offset as needed
+            overlay.style.top = (mapCanvas.offsetTop + pixel[1]) + 'px'; // Adjust offset as needed
+
+            // Show the overlay
+            overlay.style.display = 'block';
+            overlay2.style.left = (mapCanvas.offsetLeft + pixel[0] + 10) + 'px'; // Adjust offset as needed
+            overlay2.style.top = (mapCanvas.offsetTop + pixel[1]) + 'px'; // Adjust offset as needed
+
+            // Show the overlay2
+            overlay2.style.display = 'block';
+
+            // Close overlay when close button is clicked
+            closeBtn.addEventListener('click', function () {
+                overlay.style.display = 'none';
+                overlay2.style.display = 'none';
+
+            });
+
+        } else {
+            // Hide the overlay if no feature found
+            document.getElementById('property-overlay').style.display = 'none';
+            document.getElementById('property-overlay2').style.display = 'none';
+
+        }
+    });
+});
+
+// Adjust the overlay's position when the map view changes
+map.on('moveend', function () {
+    var overlay = document.getElementById('property-overlay');
+    var visible = overlay.style.display === 'block';
+    var overlay2 = document.getElementById('property-overlay2');
+    var visible = overlay2.style.display === 'block';
+    if (visible) {
+        var feature = getFeatureUnderOverlay();
+        if (feature) {
+            var pixel = map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
+            var mapCanvas = document.getElementById('map-canvas');
+            overlay.style.left = (mapCanvas.offsetLeft + pixel[0] + 10) + 'px'; // Adjust offset as needed
+            overlay.style.top = (mapCanvas.offsetTop + pixel[1]) + 'px'; // Adjust offset as needed
+            overlay2.style.left = (mapCanvas.offsetLeft + pixel[0] + 10) + 'px'; // Adjust offset as needed
+            overlay2.style.top = (mapCanvas.offsetTop + pixel[1]) + 'px'; // Adjust offset as needed
+        } else {
+            overlay.style.display = 'none';
+            overlay2.style.display = 'none';
+        }
+    }
+});
+
+// Helper function to get the feature under the overlay
+function getFeatureUnderOverlay() {
+    // Get the pixel position of the overlay
+    var overlay = document.getElementById('property-overlay');
+    var overlay2 = document.getElementById('property-overlay2');
+
+    var left = parseFloat(overlay.style.left);
+    var top = parseFloat(overlay.style.top);
+    var left2 = parseFloat(overlay2.style.left);
+    var top2 = parseFloat(overlay2.style.top);
+    var pixel = [left, top];
+    var pixel2 = [left2, top2];
+
+    // Convert pixel position to map coordinate
+    var coordinate = map.getCoordinateFromPixel(pixel);
+    var coordinate2 = map.getCoordinateFromPixel(pixel2);
+    // Get the feature at the coordinate
+    var feature = map.forEachFeatureAtPixel(pixel, function (feature, layer) {
+        return feature;
+    });
+
+    return feature;
+}
+ </script>
     
     
  

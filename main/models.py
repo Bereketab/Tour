@@ -272,8 +272,8 @@ class Destinations(models.Model):
     english = models.CharField(db_column='English', blank=True, null=True)  # Field name made lowercase.
     x = models.FloatField(blank=True, null=True)
     y = models.FloatField(db_column='Y', blank=True, null=True)  # Field name made lowercase.
-    image1 = models.TextField(blank=True, null=True)  # This field type is a guess.
-    image2 = models.TextField(blank=True, null=True)  # This field type is a guess.
+    image1 = models.FileField(blank=True, null=True)  # This field type is a guess.
+    image2 = models.FileField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
         managed = False

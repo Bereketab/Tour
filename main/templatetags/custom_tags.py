@@ -57,6 +57,5 @@ def get_distinct_destinations_ty_info(queryset):
             'count': destination_type['count'],
             'objects': list(objects)
         })
-    print(destination_data)
 
     return destination_data
