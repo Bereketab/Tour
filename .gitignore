@@ -1,5 +1,5 @@
 # /eaii_startup/settings.py
-/main/__pycache__/
+/main/__pycache__/*.pyc
 /main/migrations/
 # build artifacts
 *.pyc
