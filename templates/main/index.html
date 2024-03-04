@@ -19,6 +19,38 @@
     <link rel="stylesheet" href="{% static 'jquery-ui.css' %}">
 
 <style>
+    .nn{
+        width: 50% !important;
+    }
+    .hover-zoom {
+  /* Set initial image dimensions */
+  width: 200px;
+  height: 150px;
+  object-fit: cover; /* Keeps aspect ratio on resize */
+  transition: transform 0.3s ease-in-out; /* Smooth animation */
+  cursor: zoom-in; /* Change cursor on hover */
+}
+
+.hover-zoom:hover {
+  transform: scale(1.2); /* Enlarge image on hover */
+}
+
+    .image-container {
+  overflow: hidden; /* This is important for the animation to work */
+}
+
+.image-container img {
+  animation: slide-in 2s ease-in-out forwards;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(-100%); /* Start image off-screen to the left */
+  }
+  100% {
+    transform: translateX(0); /* Slide image to the right */
+  }
+}
     .property-overlay {
         position: absolute;
   background-color: white;
@@ -105,8 +137,8 @@
                             aria-selected="true">Catalog</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill"
-                            data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile"
+                        <button class="nav-link" id="pills-routing-tab" data-bs-toggle="pill"
+                            data-bs-target="#pills-routing" type="button" role="tab" aria-controls="pills-routing"
                             aria-selected="false">Route</button>
                     </li>
                     <!-- <li class="nav-item" role="presentation">
@@ -313,8 +345,17 @@
                    
                         </ul>
                     </div>
-                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                        this part of app is under maintainance we will get back soon</div>
+                    <div class="tab-pane fade" id="pills-routing" role="tabpanel" aria-labelledby="pills-routing-tab">
+                        <div class="form-group">
+                          <input type="text" class="form-control nn" id="sourceLocation" placeholder="Enter source location" autocomplete="off">
+                        </div>
+                        <br>
+                        <div class="form-group">
+                          <input type="text" class="form-control nn" id="targetLocation" placeholder="Enter target location" autocomplete="off">
+                        </div>
+                        <br>
+                        <button class="btn btn-primary" onclick="makeRoute()">Route</button>
+                       </div>
                     <!-- <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div> -->
                 </div>
 
@@ -325,14 +366,14 @@
                 <div id="property-overlay" class="property-overlay" style="display: none;">
                     <b>Service Properties</b><br>
                     Name:<span id="full_name-label"></span><br>
-  Zone:<span id="zone-label"></span><br>
-  Wereda:<span id="wereda-label"></span><br>
-  Kebele:<span id="kebele-label"></span><br>
-  Phone:<span id="phone_line-label"></span><br>
-  Email:<span id="email-label"></span><br>
-  Service Type:<span id="service_ty-label"></span><br>
-  Owner Name<span id="owner_name-label"></span><br>
-  Moto:<span id="moto-label"></span><br>
+                    Zone:<span id="zone-label"></span><br>
+                    Wereda:<span id="wereda-label"></span><br>
+                    Kebele:<span id="kebele-label"></span><br>
+                    Phone:<span id="phone_line-label"></span><br>
+                    Email:<span id="email-label"></span><br>
+                    Service Type:<span id="service_ty-label"></span><br>
+                    Owner Name<span id="owner_name-label"></span><br>
+                    Moto:<span id="moto-label"></span><br>
                     </div>
                     <div id="property-overlay2" class="property-overlay" style="display: none;">
                         <b>Destination Properties</b><br>
@@ -347,8 +388,10 @@
                         <span id="photo_loca-label2"></span><br>
                         Amharic Description:<span id="amharic-label2"></span><br>
                         English Description<span id="english-label2"></span><br>
-                        <img id="image1-label2" src=""></img><br>
-                        <img id="image2-label2" src=""></img><br>
+                        <div class="image-container">
+                            <img id="image1-label2" src="" style="width: 200px; height: 150px;" class="hover-zoom" />
+                            <img id="image2-label2" src="" style="width: 200px; height: 150px;" class="hover-zoom" />
+                          </div>
                         </div>
 
             </div>
@@ -363,7 +406,10 @@
     <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
     <script src="{% static 'jquery-ui.js' %}"></script>
     <script>
+         var source;
+  var target;
       $(function() {
+        
   var combinedData = JSON.parse("{{ combined_data_autocomplete|escapejs }}");
 
   var availableTags = [];
@@ -423,6 +469,7 @@
     image1: destination.image1,
     image2: destination.image2  });
   });
+ 
   var pointLayer; // Declare pointLayer outside the select event handler to maintain reference
   $("#autocomplete-input").autocomplete({
     source: availableTags,
@@ -514,6 +561,8 @@ pointFeature.set('image2', selectedItem.image2);
             })
         })
     });
+    const layers = map.getLayers();
+
 
     // Add the point layer to the map
     map.addLayer(pointLayer);
@@ -534,7 +583,346 @@ pointFeature.set('image2', selectedItem.image2);
         }
     }
 });
+var pointLayerSource;
+var shortestPathLayer;
+$("#sourceLocation").autocomplete({
+    source: availableTags,
+    select: function(event, ui) {
+        // Clear previous pointLayer if exists
+        if (pointLayerSource) {
+            map.removeLayer(pointLayerSource);
+        }
+        const layers = map.getLayers();
+
+
+// Find the layer by name:
+const shortestPathLayer = layers.getArray().find(layer => layer.get('name') === 'shortest_path');
+console.log("bvk;lkbv",shortestPathLayer)
+if (shortestPathLayer) {
+  map.removeLayer(shortestPathLayer)
+} else {
+  console.error('Layer with name "shortest_path" not found on the map.');
+}
+ 
+console.log(ui.item)
+        // Get the selected item data
+        var selectedItem = ui.item;
+
+// Check if x and y coordinates exist
+if (selectedItem.hasOwnProperty('x') && selectedItem.hasOwnProperty('y')) {
+    var pointFeature = new ol.Feature();
+
+    if(selectedItem.whattype=="services"){
+ var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearst_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
+
+ $.ajax({
+                        jsonp: false,
+                       
+                        url: url,
+                        async: false,
+                        success: function(data) {
+                            source=data.features[0].properties.id
+                            
+
+pointFeature.setGeometry(new ol.geom.Point([data.features[0].geometry.coordinates[0], data.features[0].geometry.coordinates[1]]));
+pointFeature.set('whattype', 'services');
+pointFeature.set('geom', selectedItem.geom);
+pointFeature.set('objectid', selectedItem.objectid);
+pointFeature.set('x', selectedItem.x);
+pointFeature.set('y', selectedItem.y);
+pointFeature.set('z', selectedItem.z);
+pointFeature.set('code', selectedItem.code);
+pointFeature.set('full_name', selectedItem.full_name);
+pointFeature.set('short_name', selectedItem.short_name);
+pointFeature.set('zone', selectedItem.zone);
+pointFeature.set('wereda', selectedItem.wereda);
+pointFeature.set('kebele', selectedItem.kebele);
+pointFeature.set('phone_line', selectedItem.phone_line);
+pointFeature.set('email', selectedItem.email);
+pointFeature.set('website', selectedItem.website);
+pointFeature.set('service_ty', selectedItem.service_ty);
+pointFeature.set('owner_name', selectedItem.owner_name);
+pointFeature.set('moto', selectedItem.moto);
+                        }
+                    });
+
+
+   
+  
+    }
+    if(selectedItem.whattype=="destinations"){
+        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearst_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
+
+$.ajax({
+                       jsonp: false,
+                      
+                       url: url,
+                       async: false,
+                       success: function(data) {
+                        source=data.features[0].properties.id
+        pointFeature.setGeometry(new ol.geom.Point([data.features[0].geometry.coordinates[0], data.features[0].geometry.coordinates[1]]));
+pointFeature.set('whattype', 'destinations');
+pointFeature.set('geom', selectedItem.geom);
+pointFeature.set('objectid', selectedItem.objectid);
+pointFeature.set('name', selectedItem.name);
+pointFeature.set('datetimes', selectedItem.datetimes);
+pointFeature.set('elevation', selectedItem.elevation);
+pointFeature.set('code', selectedItem.code);
+pointFeature.set('full_name', selectedItem.full_name);
+pointFeature.set('short_name', selectedItem.short_name);
+pointFeature.set('zone', selectedItem.zone);
+pointFeature.set('wereda', selectedItem.wereda);
+pointFeature.set('kebele', selectedItem.kebele);
+pointFeature.set('locality_n', selectedItem.locality_n);
+pointFeature.set('organizati', selectedItem.organizati);
+pointFeature.set('destinatio', selectedItem.destinatio);
+pointFeature.set('status', selectedItem.status);
+pointFeature.set('area_sqkm', selectedItem.area_sqkm);
+pointFeature.set('yearly_est', selectedItem.yearly_est);
+pointFeature.set('unesco_reg', selectedItem.unesco_reg);
+pointFeature.set('descriptio', selectedItem.descriptio);
+pointFeature.set('photo_no', selectedItem.photo_no);
+pointFeature.set('photo_loca', selectedItem.photo_loca);
+pointFeature.set('site_des_a', selectedItem.site_des_a);
+pointFeature.set('amharic', selectedItem.amharic);
+pointFeature.set('english', selectedItem.english);
+pointFeature.set('x', selectedItem.x);
+pointFeature.set('y', selectedItem.y);
+pointFeature.set('image1', selectedItem.image1);
+pointFeature.set('image2', selectedItem.image2);
+
+
+
+}
 });
+    }
+  
+
+    // Create a vector layer to hold the point feature
+    pointLayerSource = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: [pointFeature],
+            
+        }),
+        style:new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({color: "red"}),
+                stroke: new ol.style.Stroke({color: "blue", width: 2})
+            })
+        })
+    });
+    
+
+    // Add the point layer to the map
+    map.addLayer(pointLayerSource);
+
+    // Get the current zoom level
+    var currentZoom_ = map.getView().getZoom();
+
+    // Set the center of the map to the selected point
+    var center = [selectedItem.x, selectedItem.y];
+    map.getView().animate({
+        center: center,
+        zoom: currentZoom_ + 2, // You can adjust the zoom level here
+        duration: 1000 // Duration of the animation in milliseconds
+    });
+
+        } else {
+            console.warn("Selected item doesn't have x and y coordinates");
+        }
+    }
+});
+var pointLayerTarget;
+$("#targetLocation").autocomplete({
+    source: availableTags,
+    select: function(event, ui) {
+        // Clear previous pointLayer if exists
+        if (pointLayerTarget) {
+            map.removeLayer(pointLayerTarget);
+        }
+        const layers = map.getLayers();
+
+
+// Find the layer by name:
+const shortestPathLayer = layers.getArray().find(layer => layer.get('name') === 'shortest_path');
+console.log("bvk;lkbv",shortestPathLayer)
+if (shortestPathLayer) {
+  map.removeLayer(shortestPathLayer)
+} else {
+  console.error('Layer with name "shortest_path" not found on the map.');
+}
+ 
+console.log(ui.item)
+        // Get the selected item data
+        var selectedItem = ui.item;
+
+// Check if x and y coordinates exist
+if (selectedItem.hasOwnProperty('x') && selectedItem.hasOwnProperty('y')) {
+    var pointFeature = new ol.Feature();
+
+    if(selectedItem.whattype=="services"){
+        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearst_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
+
+$.ajax({
+                       jsonp: false,
+                      
+                       url: url,
+                       async: false,
+                       success: function(data) {
+        pointFeature.setGeometry(new ol.geom.Point([data.features[0].geometry.coordinates[0], data.features[0].geometry.coordinates[1]]));
+
+        target=data.features[0].properties.id
+
+pointFeature.setGeometry(new ol.geom.Point([selectedItem.x, selectedItem.y]));
+pointFeature.set('whattype', 'services');
+pointFeature.set('geom', selectedItem.geom);
+pointFeature.set('objectid', selectedItem.objectid);
+pointFeature.set('x', selectedItem.x);
+pointFeature.set('y', selectedItem.y);
+pointFeature.set('z', selectedItem.z);
+pointFeature.set('code', selectedItem.code);
+pointFeature.set('full_name', selectedItem.full_name);
+pointFeature.set('short_name', selectedItem.short_name);
+pointFeature.set('zone', selectedItem.zone);
+pointFeature.set('wereda', selectedItem.wereda);
+pointFeature.set('kebele', selectedItem.kebele);
+pointFeature.set('phone_line', selectedItem.phone_line);
+pointFeature.set('email', selectedItem.email);
+pointFeature.set('website', selectedItem.website);
+pointFeature.set('service_ty', selectedItem.service_ty);
+pointFeature.set('owner_name', selectedItem.owner_name);
+pointFeature.set('moto', selectedItem.moto);
+                       }
+                       })
+                    
+  
+    }
+    if(selectedItem.whattype=="destinations"){
+        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearst_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
+
+$.ajax({
+                       jsonp: false,
+                      
+                       url: url,
+                       async: false,
+                       success: function(data) {
+        pointFeature.setGeometry(new ol.geom.Point([data.features[0].geometry.coordinates[0], data.features[0].geometry.coordinates[1]]));
+
+        target=data.features[0].properties.id
+
+
+pointFeature.setGeometry(new ol.geom.Point([selectedItem.x, selectedItem.y]));
+pointFeature.set('whattype', 'destinations');
+pointFeature.set('geom', selectedItem.geom);
+pointFeature.set('objectid', selectedItem.objectid);
+pointFeature.set('name', selectedItem.name);
+pointFeature.set('datetimes', selectedItem.datetimes);
+pointFeature.set('elevation', selectedItem.elevation);
+pointFeature.set('code', selectedItem.code);
+pointFeature.set('full_name', selectedItem.full_name);
+pointFeature.set('short_name', selectedItem.short_name);
+pointFeature.set('zone', selectedItem.zone);
+pointFeature.set('wereda', selectedItem.wereda);
+pointFeature.set('kebele', selectedItem.kebele);
+pointFeature.set('locality_n', selectedItem.locality_n);
+pointFeature.set('organizati', selectedItem.organizati);
+pointFeature.set('destinatio', selectedItem.destinatio);
+pointFeature.set('status', selectedItem.status);
+pointFeature.set('area_sqkm', selectedItem.area_sqkm);
+pointFeature.set('yearly_est', selectedItem.yearly_est);
+pointFeature.set('unesco_reg', selectedItem.unesco_reg);
+pointFeature.set('descriptio', selectedItem.descriptio);
+pointFeature.set('photo_no', selectedItem.photo_no);
+pointFeature.set('photo_loca', selectedItem.photo_loca);
+pointFeature.set('site_des_a', selectedItem.site_des_a);
+pointFeature.set('amharic', selectedItem.amharic);
+pointFeature.set('english', selectedItem.english);
+pointFeature.set('x', selectedItem.x);
+pointFeature.set('y', selectedItem.y);
+pointFeature.set('image1', selectedItem.image1);
+pointFeature.set('image2', selectedItem.image2);
+                       }
+                    })
+    }
+  
+
+    // Create a vector layer to hold the point feature
+    pointLayerTarget = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: [pointFeature],
+            
+        }),
+        style:new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({color: "blue"}),
+                stroke: new ol.style.Stroke({color: "red", width: 2})
+            })
+        })
+    });
+   
+    // Add the point layer to the map
+    map.addLayer(pointLayerTarget);
+
+    // Get the current zoom level
+    var currentZoom_ = map.getView().getZoom();
+
+    // Set the center of the map to the selected point
+    var center = [selectedItem.x, selectedItem.y];
+    map.getView().animate({
+        center: center,
+        zoom: currentZoom_ + 2, // You can adjust the zoom level here
+        duration: 1000 // Duration of the animation in milliseconds
+    });
+
+        } else {
+            console.warn("Selected item doesn't have x and y coordinates");
+        }
+    }
+});
+
+});
+
+function makeRoute(){
+    console.log(source)
+    console.log(target)
+    var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:shortest_path&outputformat=application/json&viewparams=source:"+source+";target:"+target+""
+
+$.ajax({
+                       jsonp: false,
+                      
+                       url: url,
+                       async: false,
+                       success: function(data) {
+                        console.log(data)
+                        var format = new ol.format.GeoJSON();
+
+// 2. Parse the features from the data:
+var features = format.readFeatures(data, {
+  // Set featureProjection if your data has a different projection
+  // than the map projection:
+  featureProjection: 'EPSG:4326'
+});
+
+shortestPathLayer= new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: features
+            
+        }),
+        name:"shortest_path"
+       
+    });
+  
+
+
+    // Add the point layer to the map
+    map.addLayer(shortestPathLayer);
+
+                       }
+
+                    })
+}
 const service_styles = [
 {
 name: "Air Port",
@@ -1031,8 +1419,12 @@ function getDynamicStyle(coord) {
             var overlay = document.getElementById('property-overlay');
             var overlay2 = document.getElementById('property-overlay2');
             var closeBtn = document.createElement('span');
+            var closeBtn2 = document.createElement('span');
             closeBtn.className = 'close-btn';
             closeBtn.innerHTML = '&#10006;'; // Close icon (you can use an appropriate icon)
+
+            closeBtn2.className = 'close-btn';
+            closeBtn2.innerHTML = '&#10006;'; // Close icon (you can use an appropriate icon)
 
 
            
@@ -1082,7 +1474,7 @@ function getDynamicStyle(coord) {
 
             // Add close button
             overlay.appendChild(closeBtn);
-            overlay2.appendChild(closeBtn);
+            overlay2.appendChild(closeBtn2);
 
             // Position the overlay beside the feature
             var pixel = map.getPixelFromCoordinate(feature.getGeometry().getCoordinates());
@@ -1101,6 +1493,9 @@ function getDynamicStyle(coord) {
             // Close overlay when close button is clicked
             closeBtn.addEventListener('click', function () {
                 overlay.style.display = 'none';
+
+            });
+            closeBtn2.addEventListener('click', function () {
                 overlay2.style.display = 'none';
 
             });
