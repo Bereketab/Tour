@@ -141,11 +141,14 @@
                             data-bs-target="#pills-routing" type="button" role="tab" aria-controls="pills-routing"
                             aria-selected="false">Route</button>
                     </li>
-                    <!-- <li class="nav-item" role="presentation">
-                      <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Contact</button>
-                    </li> -->
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
+                    <div class="row" style="justify-content: center;">
+                        <button class="btn btn-primary col-3" onclick="location.reload()">clear</button>
+                      
+
+                    </div>
+                    <br>
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
                         aria-labelledby="pills-home-tab">
                         <ul id="treeview" class="tree-view">
@@ -355,8 +358,24 @@
                         </div>
                         <br>
                         <button class="btn btn-primary" onclick="makeRoute()">Route</button>
+                       
+                        <div class="container mt-3">
+                            <h1>Distance Calculator</h1>
+                            <hr>
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <h3>Total Distance:</h3>
+                                <p id="total-distance"></p>
+                              </div>
+                              <div class="col-sm-6">
+                                <h3>Travel Times:</h3>
+                                <ul id="travel-times">
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
                        </div>
-                    <!-- <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div> -->
+
                 </div>
 
 
@@ -905,20 +924,70 @@ var features = format.readFeatures(data, {
   featureProjection: 'EPSG:4326'
 });
 
+// Initialize a variable to store the total distance
+let totalDistanceKm = 0;
+    for (const feature of data.features) {
+      if (feature.properties && feature.properties.distance) {
+        totalDistanceKm += feature.properties.distance;
+      }
+    }
+
+    const speeds = {
+      "Bicycle": 30,
+      "Car": 80,
+      "Leg": 10,
+    };
+
+    const travelTimesHTML = [];
+    for (const mode in speeds) {
+      const timeHours = totalDistanceKm / speeds[mode];
+      travelTimesHTML.push(`<li>By ${mode}: ${timeHours.toFixed(2)} hours</li>`);
+    }
+
+    document.getElementById("total-distance").textContent = `${totalDistanceKm} km`;
+    document.getElementById("travel-times").innerHTML = travelTimesHTML.join("");
+
+
 shortestPathLayer= new ol.layer.Vector({
         source: new ol.source.Vector({
             features: features
             
         }),
-        name:"shortest_path"
-       
+        name:"shortest_path",
+         style: new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: '#00FF00', // Green for the shortest path
+      width: 5
+    })
+  })
     });
   
 
 
     // Add the point layer to the map
     map.addLayer(shortestPathLayer);
+    var currentZoom_ = map.getView().getZoom();
+  // Assuming you have a map object named 'map'
+var extent = ol.extent.createEmpty();
 
+for (var i = 0; i < features.length; i++) {
+  var feature = features[i];
+  var geometry = feature.getGeometry();
+
+  // Get the extent of each feature and extend the overall extent
+  ol.extent.extend(extent, geometry.getExtent());
+}
+
+// Calculate the center of the combined extent
+var center = ol.extent.getCenter(extent);
+
+// Use the center coordinates as needed (e.g., to center your map)
+// Set the center of the map to the selected point
+map.getView().animate({
+    center: center,
+    zoom: currentZoom_ + 2, // You can adjust the zoom level here
+    duration: 1000 // Duration of the animation in milliseconds
+});
                        }
 
                     })
