@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-bnx%c453clczn84s@s=uum&7&fq$!au0yvoq@3p-ye_q7wxok#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['gotourist.ssgi.gov.et']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -84,10 +84,10 @@ WSGI_APPLICATION = 'GoTour.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'GOTour',
+        'NAME': 'gis',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': '10.2.4.16',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -138,3 +138,4 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

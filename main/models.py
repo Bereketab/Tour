@@ -264,11 +264,11 @@ class Destinations(models.Model):
     area_sqkm = models.CharField(db_column='Area_sqkm', blank=True, null=True)  # Field name made lowercase.
     yearly_est = models.CharField(db_column='Yearly_Est', blank=True, null=True)  # Field name made lowercase.
     unesco_reg = models.CharField(db_column='UNESCO_Reg', blank=True, null=True)  # Field name made lowercase.
-    descriptio = models.CharField(db_column='Descriptio', blank=True, null=True)  # Field name made lowercase.
+    descriptio = models.TextField(db_column='Descriptio', blank=True, null=True)  # Field name made lowercase.
     photo_no = models.CharField(db_column='Photo_No', blank=True, null=True)  # Field name made lowercase.
     photo_loca = models.CharField(db_column='Photo_Loca', blank=True, null=True)  # Field name made lowercase.
     site_des_a = models.CharField(db_column='Site_Des_A', blank=True, null=True)  # Field name made lowercase.
-    amharic = models.CharField(db_column='Amharic', blank=True, null=True)  # Field name made lowercase.
+    amharic = models.TextField(db_column='Amharic', blank=True, null=True)  # Field name made lowercase.
     english = models.CharField(db_column='English', blank=True, null=True)  # Field name made lowercase.
     x = models.FloatField(blank=True, null=True)
     y = models.FloatField(db_column='Y', blank=True, null=True)  # Field name made lowercase.

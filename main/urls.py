@@ -10,6 +10,7 @@ app_name = 'main'
 # Define urlpatterns for regular views
 urlpatterns = [
     path('', views.index, name='index'),
+    path('app', views.app, name='app'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Create a router for DRF views

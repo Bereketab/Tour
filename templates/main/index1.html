@@ -103,8 +103,8 @@
         });
 
 
-        var geoserver_destination_url = "http://196.188.104.34:8083/geoserver/GOTour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GOTour%3Adestinations&maxFeatures=10000&outputFormat=application%2Fjson";
-        var geoserver_service_url = "http://196.188.104.34:8083/geoserver/GOTour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GOTour%3Aservices&maxFeatures=1000&outputFormat=application%2Fjson";
+        var geoserver_destination_url = "localhost:8080/geoserver/GOTour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GOTour%3Adestinations&maxFeatures=10000&outputFormat=application%2Fjson";
+        var geoserver_service_url = "localhost:8080/geoserver/GOTour/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=GOTour%3Aservices&maxFeatures=1000&outputFormat=application%2Fjson";
 
         $(document).ready(function () {
             $("#autocomplete-input").autocomplete({

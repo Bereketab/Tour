@@ -95,9 +95,10 @@ def getFrontData(services_data_dict):
         result.append(category_dict)
     return result
 
-
-context = {}
 def index(request):
+    return render(request,'main/landing.html',context)
+context = {}
+def app(request):
         # Assuming you have retrieved data from your models
     destinations = Destinations.objects.all()
     services = Services.objects.all()

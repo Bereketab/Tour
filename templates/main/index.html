@@ -19,6 +19,51 @@
     <link rel="stylesheet" href="{% static 'jquery-ui.css' %}">
 
 <style>
+    /* CSS for Responsive Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #333;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+}
+
+.navbar li {
+  margin-right: 1rem;
+}
+
+@media (max-width: 768px) {
+  .navbar ul {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 4rem;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+  }
+
+  .navbar ul.show {
+    display: flex;
+  }
+
+  .navbar li {
+    margin: 0;
+    padding: 1rem;
+    border-bottom: 1px solid #555;
+    width: 100%;
+    text-align: center;
+  }
+
+  .menu-icon {
+    display: block;
+  }
+}
     .nn{
         width: 50% !important;
     }
@@ -111,17 +156,15 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">GO Tour</a>
+            <a class="navbar-brand" href="{% url 'main:index' %}">GO Tour</a>
+            <a class="navbar-brand" href="{% url 'main:app' %}">App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <input id="autocomplete-input" class="form-control mr-sm-2" type="text"
             placeholder="Search Destinations or Services" aria-label="Search" autocomplete="off">
-     
-
-            
-        </div>
+    </div>
     </nav>
 
     <!-- Rest of your content -->
@@ -145,8 +188,7 @@
                 <div class="tab-content" id="pills-tabContent">
                     <div class="row" style="justify-content: center;">
                         <button class="btn btn-primary col-3" onclick="location.reload()">clear</button>
-                      
-
+                        <button class="btn btn-primary col-3" onclick="geolocateMe()">geolocate me</button>
                     </div>
                     <br>
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
@@ -155,7 +197,7 @@
                             <li>
                                 <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#step1"></span>
                                 <input type="checkbox" id="step1" />
-                                <label for="step1">Services</label>
+                                <label for="step1">Services ({{combined_data.services.count}})</label>
                         
                                 <ul id="step1" class="collapse">
                                   
@@ -282,7 +324,7 @@
                             <li>
                                 <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#step1"></span>
                                 <input type="checkbox" id="step1" />
-                                <label for="step1">Destination</label>
+                                <label for="step1">Attraction Site({{combined_data.destinations.count}})</label>
                         
                                 <ul id="step1" class="collapse">
                                    
@@ -422,9 +464,23 @@
     <script src="{% static 'js/jquery-1.10.2.min.js'%}"></script>
 
     <script src="{% static 'ol.js' %}"></script>
-    <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
     <script src="{% static 'jquery-ui.js' %}"></script>
+    <script src="https://unpkg.com/ol-layerswitcher@4.1.1"></script>
+
     <script>
+       function geolocateMe() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var pos = ol.proj.fromLonLat([position.coords.longitude, position.coords.latitude]);
+                    map.getView().setCenter(pos);
+                    map.getView().setZoom(10); // Zoom in to a suitable level
+                }, function(error) {
+                    alert('Geolocation failed. ' + error.message);
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
          var source;
   var target;
       $(function() {
@@ -632,14 +688,14 @@ if (selectedItem.hasOwnProperty('x') && selectedItem.hasOwnProperty('y')) {
     var pointFeature = new ol.Feature();
 
     if(selectedItem.whattype=="services"){
- var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearst_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
-
+ var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearest_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
  $.ajax({
                         jsonp: false,
                        
                         url: url,
                         async: false,
                         success: function(data) {
+                            console.log(data)
                             source=data.features[0].properties.id
                             
 
@@ -670,7 +726,7 @@ pointFeature.set('moto', selectedItem.moto);
   
     }
     if(selectedItem.whattype=="destinations"){
-        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearst_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
+        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearest_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
 
 $.ajax({
                        jsonp: false,
@@ -781,7 +837,7 @@ if (selectedItem.hasOwnProperty('x') && selectedItem.hasOwnProperty('y')) {
     var pointFeature = new ol.Feature();
 
     if(selectedItem.whattype=="services"){
-        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearst_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
+        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearest_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
 
 $.ajax({
                        jsonp: false,
@@ -818,7 +874,7 @@ pointFeature.set('moto', selectedItem.moto);
   
     }
     if(selectedItem.whattype=="destinations"){
-        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearst_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
+        var url = "http://localhost:8080/geoserver/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=routing:nearest_vertex&outputformat=application/json&viewparams=x:"+selectedItem.x+";y:"+selectedItem.y+";"
 
 $.ajax({
                        jsonp: false,
@@ -914,7 +970,7 @@ $.ajax({
                        url: url,
                        async: false,
                        success: function(data) {
-                        console.log(data)
+                        console.log("pppp",data)
                         var format = new ol.format.GeoJSON();
 
 // 2. Parse the features from the data:
@@ -1321,11 +1377,15 @@ function getDynamicStyle(coord) {
     
             // Add the marker layer to the map
             map.addLayer(markerLayer);
+            
             function getFeaturesExtent(vectorLayer) {
+                
             let extent = null;
             vectorLayer.getSource().forEachFeature(function(feature) {
+                console.log("ppppp",feature)
                 const featureGeometry = feature.getGeometry();
                 const featureExtent = featureGeometry.getExtent();
+                
                 if (!extent) {
                 extent = featureExtent.slice(); // Create a copy to avoid modification
                 } else {
@@ -1334,10 +1394,11 @@ function getDynamicStyle(coord) {
             });
             return extent;
             }
+
             const featuresExtent = getFeaturesExtent(markerLayer);
+
             const center = ol.extent.getCenter(featuresExtent);
             
-         
             map.getView().animate({
             center:center,
             extent: featuresExtent,
@@ -1439,13 +1500,13 @@ function getDynamicStyle(coord) {
                 $parentCheckbox.siblings('ul').find(':checkbox').prop('checked', isChecked);
             }
     
+            
             $('.tree-view :checkbox').change(function () {
                 var $parentCheckbox = $(this);
                 toggleChildren($parentCheckbox);
-    
                 // Get checked leaf nodes after toggling children
                 var checkedLeafNodes = getCheckedLeafNodes($parentCheckbox.closest('ul'));
-    
+
                 // Add markers to the map based on checked coordinates
                 addMarkersToMap(checkedLeafNodes);
             });
@@ -1453,13 +1514,38 @@ function getDynamicStyle(coord) {
             // Trigger checkbox change event on page load to display checked points
             $('.tree-view :checkbox:checked').trigger('change');
         });
-    
+        var googleSatelliteSource = new ol.source.XYZ({
+    url: 'http://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
+});
+
+// Define the Google Satellite layer
+var googleSatelliteLayer = new ol.layer.Tile({
+    source: googleSatelliteSource,
+    name: 'Google Satellite'
+});
+        var vectorSource = new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: function(extent) {
+        return 'http://localhost:8080/geoserver/routing/ows?service=WFS&' +
+            'version=1.0.0&request=GetFeature&typeName=routing%3Aprojectedsouthomo&' +
+            'maxFeatures=90000&outputFormat=application%2Fjson';
+    },
+    strategy: ol.loadingstrategy.bbox
+});
+
+// Define the vector layer
+var vectorLayer = new ol.layer.Vector({
+    source: vectorSource,
+    name: 'GeoJSON Layer'
+});
         var map = new ol.Map({
             layers: [
                 new ol.layer.Tile({
                     source: new ol.source.OSM(),
                     name: 'OSM'
-                })
+                }),
+                googleSatelliteLayer,
+                vectorLayer,
             ],
             target: 'map-canvas',
             controls: ol.control.defaults({
@@ -1475,7 +1561,7 @@ function getDynamicStyle(coord) {
         });
         var layerSwitcher = new ol.control.LayerSwitcher({
             tipLabel: 'Layer Switcher',
-            reverse: true,
+            //reverse: true,
             groupSelectStyle: 'group'
         });
     

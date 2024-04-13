@@ -1,0 +1,339 @@
+<!doctype html>
+{% load static %}
+{% load custom_tags %}
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+
+    <link href="{% static 'b5/css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+    <link href="{% static 'css/style.default.css'%}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'jquery-ui.css' %}">
+
+    <style>
+        /* CSS for Responsive Navigation Bar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #333;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+        }
+
+        .navbar li {
+            margin-right: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 4rem;
+                left: 0;
+                width: 100%;
+                background-color: #333;
+            }
+
+            .navbar ul.show {
+                display: flex;
+            }
+
+            .navbar li {
+                margin: 0;
+                padding: 1rem;
+                border-bottom: 1px solid #555;
+                width: 100%;
+                text-align: center;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+        }
+
+        .nn {
+            width: 50% !important;
+        }
+
+        .hover-zoom {
+            /* Set initial image dimensions */
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            /* Keeps aspect ratio on resize */
+            transition: transform 0.3s ease-in-out;
+            /* Smooth animation */
+            cursor: zoom-in;
+            /* Change cursor on hover */
+        }
+
+        .hover-zoom:hover {
+            transform: scale(1.2);
+            /* Enlarge image on hover */
+        }
+
+        .image-container {
+            overflow: hidden;
+            /* This is important for the animation to work */
+        }
+
+        .image-container img {
+            animation: slide-in 2s ease-in-out forwards;
+        }
+
+        @keyframes slide-in {
+            0% {
+                transform: translateX(-100%);
+                /* Start image off-screen to the left */
+            }
+
+            100% {
+                transform: translateX(0);
+                /* Slide image to the right */
+            }
+        }
+
+        .property-overlay {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 18px;
+            max-width: 568px;
+            overflow-x: scroll;
+        }
+
+        .property-overlay span.close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+
+        #pills-tabContent {
+            height: 100vh;
+        }
+
+        .tree-view {
+            list-style: none;
+            overflow-y: scroll;
+            height: 100vh;
+
+        }
+
+        .form-control {
+            width: 30%;
+        }
+
+
+        .tree-view li.collapsible>ul {
+            display: none;
+        }
+
+        .tree-view li.collapsible::before {
+            content: '►';
+            position: absolute;
+            left: -20px;
+        }
+
+        .tree-view li.collapsible.collapsed::before {
+            content: '▶';
+        }
+
+        .tree-view li:last-child {
+            margin-left: 0;
+        }
+
+        .tree-view li:last-child::before {
+            content: none;
+        }
+        .card:hover {
+  /* Add your desired hover effects here */
+  background-color: #f5f5f5;  /* Change background color on hover */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* Add subtle shadow on hover */
+  cursor: pointer;  /* Change cursor to pointer on hover (optional) */
+}
+.card-body-expand {
+  /* Initial styles for the card-body */
+  height: auto;  /* Adjust as needed */
+  transition: height 0.5s ease-in-out;  /* Adjust duration and timing function */
+}
+
+.card-body-expand:hover {
+  /* Styles for the card-body on hover */
+  height: 200px;  /* Adjust desired height */
+}
+    </style>
+
+    <title>GO Tour</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'main:index' %}">GO Tour</a>
+            <a class="navbar-brand" href="{% url 'main:app' %}">App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+        </div>
+    </nav>
+
+    <!-- Rest of your content -->
+    <div class="container-fluid">
+        <div class="row">
+            <div id="carouselExampleCaptions" class="carousel slide">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                        aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                        aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                        aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active" style="background-color: rebeccapurple; height: 60vh;">
+                        <img src="..." class="d-block w-100" alt="...">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>First slide label</h5>
+                            <p>Some representative placeholder content for the first slide.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item" style="background-color: red; height: 60vh;">
+                        <img src="..." class="d-block w-100" alt="...">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Second slide label</h5>
+                            <p>Some representative placeholder content for the second slide.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item" style="background-color: blue; height: 60vh;">
+                        <img src="..." class="d-block w-100" alt="...">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>Third slide label</h5>
+                            <p>Some representative placeholder content for the third slide.</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+        </div>
+        <br>
+        <div class="row justify-content-center">
+            <h3 style="display: flex; justify-content: center;">What's in go-tour</h3>
+            <div class="container-fluid d-flex justify-content-center">
+                <div class="row g-3">
+                    <div class="col-md-4 mb-3 text-center">
+                        <div class="card">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 text-center">
+                        <div class="card">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Services</h5>
+                    </div>
+                    <div class="card-body card-body-expand">
+                        <p class="card-text">Visualize your desired Services.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="title">Destinations</h5>
+                    </div>
+                    <div class="card-body card-body-expand">
+                        <p class="card-text">Visualize your desired destinations</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="title">Routing</h5>
+                    </div>
+                    <div class="card-body card-body-expand">
+                        <p class="card-text">Visualize your desired destinations</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="row justify-content-center">
+            <h3 style="display: flex; justify-content: center;">Hosted By</h3>
+            <div class="container-fluid d-flex justify-content-center">
+                <div class="row g-3">
+                    <div class="col-md-4 mb-3 text-center">
+                        <div class="card">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 text-center">
+                        <div class="card">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">SSGI</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Address</p>
+                        <a href="#" class="stretched-link">Learn more</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3 text-center">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="title">AMU</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Adress</p>
+                        <a href="#" class="stretched-link">See details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="{% static 'b5/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery-1.10.2.min.js'%}"></script>
+
+
+
+</body>
+
+</html>
