@@ -51,7 +51,7 @@ def getDestinationMap(services_data_dict):
             destination_mapping[destintio] = []
     
         destination_mapping[destintio].append({'full_name': full_name
-                                        #    ,'short_name': item['fields']['short_name']
+        #                                    ,'short_name': item['fields']['short_name']
         # , 'id': item['fields']['id']
         # , 'geom': item['fields']['geom']
         # , 'objectid': item['fields']['objectid']
@@ -182,7 +182,7 @@ def app(request):
         combined_data_autocomplete['destinations'].append(destination_dict)
     context['combined_data'] = combined_data
     context['combined_data_autocomplete'] = json.dumps(combined_data_autocomplete)
-    return render(request,'main/index.html',context)
+    return render(request,'main/i1.html',context)
 
 
 

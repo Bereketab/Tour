@@ -1,0 +1,231 @@
+{%extends "./base-2.html" %}
+{%block content %}
+{% include './navbar-2.html' %}
+{% load static %}
+
+<div id="backdrop">
+  <div id="loadingSpinner"></div>
+</div>
+
+<div class="row">
+  <div class="col-4 custom-col">
+    <br>
+    <p class="card-title" style="text-align: center;">layers</p>
+
+    <div class="row" style="justify-content: center;">
+      <div class="card cardib" style="width: 34rem;">
+        <div class="card-body" style="justify-content: center;display: grid;">
+          <div class="row indice">
+            <div class="col-2">
+              <div class=" form-check form-switch form-check">
+                <input class="form-check-input" type="checkbox" id="drought">
+                <label class="form-check-label" for="drought">Drought</label>
+              </div>
+
+            </div>
+          </div>
+          <div class="row indice">
+            <div class="col-2">
+              <div class="form-check form-switch form-check">
+                <input class="form-check-input" type="checkbox" id="lake">
+                <label class="form-check-label" for="lake">Lake</label>
+              </div>
+            </div>
+          </div>
+          <div class="row indice">
+            <div class="col-2">
+              <div class="form-check form-switch form-check">
+                <input class="form-check-input" type="checkbox" id="soil">
+                <label class="form-check-label" for="soil">Soil</label>
+              </div>
+            </div>
+          </div>
+          <div class="row indice">
+            <div class="col-2">
+              <div class="form-check form-switch form-check">
+                <input class="form-check-input" type="checkbox" id="spi">
+                <label class="form-check-label" for="spi">SPI</label>
+              </div>
+            </div>
+          </div>
+          <div class="row indice">
+            <div class="col-2">
+              <div class="form-check form-switch form-check">
+                <input class="form-check-input" type="checkbox" id="wind">
+                <label class="form-check-label" for="wind">Wind Power</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="col-8 custom-col">
+    <div id="map" class="map">
+      <div id="ledgend" class="ledgend">
+        <div class="accordion" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Ledgened
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <button type="button" class="btn btn-primary" data-bs-toggle="popover"   data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-content="Primary Button"></button>
+                  <button type="button" class="btn btn-secondary" data-bs-toggle="popover"   data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-content="Secondary Button"></button>
+                  <button type="button" class="btn btn-success" data-bs-toggle="popover"   data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-content="Success Button"></button>
+                  <button type="button" class="btn btn-danger" data-bs-toggle="popover"   data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-content="Danger Button"></button>
+                  <button type="button" class="btn btn-info" data-bs-toggle="popover"   data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-content="Info Button"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Enable Bootstrap Popovers
+  var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+  var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    return new bootstrap.Popover(popoverTriggerEl);
+  });
+</script>
+<script>
+  // Define a cache object to store fetched layers
+  var layerCache = {};
+
+  function setCheckboxesUnchecked() {
+    $('.form-check-input').prop('checked', false);
+  }
+
+  setCheckboxesUnchecked();
+  var osmLayer = new ol.layer.Tile({
+    name: 'osm',
+    source: new ol.source.OSM()
+  });
+  var map = new ol.Map({
+    layers: [osmLayer],
+    target: 'map',
+    controls: ol.control.defaults({
+      attributionOptions: {
+        collapsible: false
+      }
+    }),
+    view: new ol.View({
+      center: [42, 8],
+      zoom: 6,
+      projection: 'EPSG:4326'
+    })
+  });
+
+  var selectedElements = [];
+
+  $('.form-check-input').change(function () {
+    map.getLayers().forEach(function (layer) {
+      if (layer !== osmLayer) {
+        map.removeLayer(layer);
+      }
+    });
+
+    var checkboxId = $(this).attr('id');
+    if ($(this).is(':checked')) {
+      selectedElements.push(checkboxId);
+    } else {
+      selectedElements = selectedElements.filter(item => item !== checkboxId);
+    }
+
+    if (selectedElements.length == 0) {
+      map.getLayers().forEach(function (layer) {
+        if (layer !== osmLayer) {
+          map.removeLayer(layer);
+        }
+      });
+    }
+
+    selectedElements.forEach(function (selected) {
+      // Check if the layer is already in the cache
+      if (layerCache[selected]) {
+        map.addLayer(layerCache[selected]);
+        return;
+      }
+
+      // If not in the cache, fetch and add the layer
+      switch (selected) {
+        case 'drought':
+          var wmsLayer = new ol.layer.Tile({
+            source: new ol.source.TileWMS({
+              url: 'http://localhost:8080/geoserver/ows',
+              params: { 'LAYERS': 'drought_analysis:ETH_Drought_Final' },
+              serverType: 'geoserver',
+              crossOrigin: 'anonymous',
+            }), 
+          });
+          map.addLayer(wmsLayer);
+          // Cache the layer
+          layerCache[selected] = wmsLayer;
+          break;
+
+        case 'lake':
+        case 'soil':
+          var vectorLayer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+              url: 'http://localhost:8080/geoserver/drought/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=drought%3ASoil&maxFeatures=10000&outputFormat=application%2Fjson',
+              format: new ol.format.GeoJSON(),
+            }),
+          });
+          map.addLayer(vectorLayer);
+          // Cache the layer
+          layerCache[selected] = vectorLayer;
+          break;
+
+        case 'spi':
+          var wmsLayer = new ol.layer.Tile({
+            source: new ol.source.TileWMS({
+              url: 'http://localhost:8080/geoserver/ows',
+              params: { 'LAYERS': 'drought_analysis:ETH_SPI' },
+              serverType: 'geoserver',
+              crossOrigin: 'anonymous',
+            }),
+          });
+          map.addLayer(wmsLayer);
+          // Cache the layer
+          layerCache[selected] = wmsLayer;
+          break;
+          case 'vi':
+          var wmsLayer = new ol.layer.Tile({
+            source: new ol.source.TileWMS({
+              url: 'http://localhost:8080/geoserver/ows',
+              params: { 'LAYERS': '	drought_analysis:ETH_VHI' },
+              serverType: 'geoserver',
+              crossOrigin: 'anonymous',
+            }),
+          });
+          map.addLayer(wmsLayer);
+          // Cache the layer
+          layerCache[selected] = wmsLayer;
+          break;
+
+        case 'wind':
+          // Handle wind layer if needed
+          break;
+      }
+    });
+  });
+
+
+</script>
+
+{% endblock content %}
+
