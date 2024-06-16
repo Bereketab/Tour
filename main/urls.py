@@ -11,6 +11,9 @@ app_name = 'main'
 urlpatterns = [
     path('', views.index, name='index'),
     path('app', views.app, name='app'),
+    path('shortest-path', views.shortest_path, name='shortest_path'),
+    path('nearest-vertex', views.getNearstVertex, name='getNearstVertex'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Create a router for DRF views

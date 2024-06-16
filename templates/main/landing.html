@@ -1,339 +1,329 @@
-<!doctype html>
+{%extends "../new/base-2.html" %}
+{%block content %}
+{% include '../new/navbar-2.html' %}
 {% load static %}
-{% load custom_tags %}
-<html lang="en">
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap CSS -->
+<style>
+    /* CSS for Responsive Navigation Bar */
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: #333;
+    }
 
-    <link href="{% static 'b5/css/bootstrap.min.css' %}" rel="stylesheet">
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
-    <link href="{% static 'css/style.default.css'%}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'jquery-ui.css' %}">
+    .navbar ul {
+        list-style: none;
+        display: flex;
+    }
 
-    <style>
-        /* CSS for Responsive Navigation Bar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
+    .navbar li {
+        margin-right: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .navbar ul {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 4rem;
+            left: 0;
+            width: 100%;
             background-color: #333;
         }
 
-        .navbar ul {
-            list-style: none;
+        .navbar ul.show {
             display: flex;
         }
 
         .navbar li {
-            margin-right: 1rem;
+            margin: 0;
+            padding: 1rem;
+            border-bottom: 1px solid #555;
+            width: 100%;
+            text-align: center;
         }
 
-        @media (max-width: 768px) {
-            .navbar ul {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 4rem;
-                left: 0;
-                width: 100%;
-                background-color: #333;
-            }
+        .menu-icon {
+            display: block;
+        }
+    }
 
-            .navbar ul.show {
-                display: flex;
-            }
+    .nn {
+        width: 50% !important;
+    }
 
-            .navbar li {
-                margin: 0;
-                padding: 1rem;
-                border-bottom: 1px solid #555;
-                width: 100%;
-                text-align: center;
-            }
+    .hover-zoom {
+        /* Set initial image dimensions */
+        width: 200px;
+        height: 150px;
+        object-fit: cover;
+        /* Keeps aspect ratio on resize */
+        transition: transform 0.3s ease-in-out;
+        /* Smooth animation */
+        cursor: zoom-in;
+        /* Change cursor on hover */
+    }
 
-            .menu-icon {
-                display: block;
-            }
+    .hover-zoom:hover {
+        transform: scale(1.2);
+        /* Enlarge image on hover */
+    }
+
+    .image-container {
+        overflow: hidden;
+        /* This is important for the animation to work */
+    }
+
+    .image-container img {
+        animation: slide-in 2s ease-in-out forwards;
+    }
+
+    @keyframes slide-in {
+        0% {
+            transform: translateX(-100%);
+            /* Start image off-screen to the left */
         }
 
-        .nn {
-            width: 50% !important;
+        100% {
+            transform: translateX(0);
+            /* Slide image to the right */
         }
+    }
 
-        .hover-zoom {
-            /* Set initial image dimensions */
-            width: 200px;
-            height: 150px;
-            object-fit: cover;
-            /* Keeps aspect ratio on resize */
-            transition: transform 0.3s ease-in-out;
-            /* Smooth animation */
-            cursor: zoom-in;
-            /* Change cursor on hover */
-        }
+    .property-overlay {
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 18px;
+        max-width: 568px;
+        overflow-x: scroll;
+    }
 
-        .hover-zoom:hover {
-            transform: scale(1.2);
-            /* Enlarge image on hover */
-        }
+    .property-overlay span.close-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        cursor: pointer;
+    }
 
-        .image-container {
-            overflow: hidden;
-            /* This is important for the animation to work */
-        }
+    #pills-tabContent {
+        height: 100vh;
+    }
 
-        .image-container img {
-            animation: slide-in 2s ease-in-out forwards;
-        }
+    .tree-view {
+        list-style: none;
+        overflow-y: scroll;
+        height: 100vh;
 
-        @keyframes slide-in {
-            0% {
-                transform: translateX(-100%);
-                /* Start image off-screen to the left */
-            }
+    }
 
-            100% {
-                transform: translateX(0);
-                /* Slide image to the right */
-            }
-        }
-
-        .property-overlay {
-            position: absolute;
-            background-color: white;
-            border: 1px solid #ccc;
-            padding: 18px;
-            max-width: 568px;
-            overflow-x: scroll;
-        }
-
-        .property-overlay span.close-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            cursor: pointer;
-        }
-
-        #pills-tabContent {
-            height: 100vh;
-        }
-
-        .tree-view {
-            list-style: none;
-            overflow-y: scroll;
-            height: 100vh;
-
-        }
-
-        .form-control {
-            width: 30%;
-        }
+    .form-control {
+        width: 30%;
+    }
 
 
-        .tree-view li.collapsible>ul {
-            display: none;
-        }
+    .tree-view li.collapsible>ul {
+        display: none;
+    }
 
-        .tree-view li.collapsible::before {
-            content: '►';
-            position: absolute;
-            left: -20px;
-        }
+    .tree-view li.collapsible::before {
+        content: '►';
+        position: absolute;
+        left: -20px;
+    }
 
-        .tree-view li.collapsible.collapsed::before {
-            content: '▶';
-        }
+    .tree-view li.collapsible.collapsed::before {
+        content: '▶';
+    }
 
-        .tree-view li:last-child {
-            margin-left: 0;
-        }
+    .tree-view li:last-child {
+        margin-left: 0;
+    }
 
-        .tree-view li:last-child::before {
-            content: none;
-        }
-        .card:hover {
-  /* Add your desired hover effects here */
-  background-color: #f5f5f5;  /* Change background color on hover */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* Add subtle shadow on hover */
-  cursor: pointer;  /* Change cursor to pointer on hover (optional) */
+    .tree-view li:last-child::before {
+        content: none;
+    }
+    .carousel-caption{
+        bottom: 40.15rem;
+    }
+
+    .card:hover {
+        /* Add your desired hover effects here */
+        background-color: #f5f5f5;
+        /* Change background color on hover */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        /* Add subtle shadow on hover */
+        cursor: pointer;
+        /* Change cursor to pointer on hover (optional) */
+    }
+
+    .card-body-expand {
+        /* Initial styles for the card-body */
+        height: auto;
+        /* Adjust as needed */
+        transition: height 0.5s ease-in-out;
+        /* Adjust duration and timing function */
+    }
+
+    .card-body-expand:hover {
+        /* Styles for the card-body on hover */
+        height: 200px;
+        /* Adjust desired height */
+    }
+.bg{
+background: #B51B13;
 }
-.card-body-expand {
-  /* Initial styles for the card-body */
-  height: auto;  /* Adjust as needed */
-  transition: height 0.5s ease-in-out;  /* Adjust duration and timing function */
-}
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div id="carouselExampleCaptions" class="carousel slide">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner" style="height: 75vh;">
+                <div class="carousel-item active">
 
-.card-body-expand:hover {
-  /* Styles for the card-body on hover */
-  height: 200px;  /* Adjust desired height */
-}
-    </style>
+                    <img src="{% static 'images/1.jpg' %}" class="d-block w-100 object-fit: cover; max-width: 100%;"
+                        alt="...">
+                    <div class="carousel-caption d-none d-md-block" style="background-color: #333;">
+                        <h5> Explore Arbaminch & South Omo</h5>
+                        <p>Discover stunning landscapes, unique cultures, and hidden gems with our interactive map. Find accommodations, restaurants, and activities - all at your fingertips!</p>
 
-    <title>GO Tour</title>
-</head>
-
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'main:index' %}">GO Tour</a>
-            <a class="navbar-brand" href="{% url 'main:app' %}">App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="{% static 'images/2.jpg' %}" class="d-block w-100 object-fit: cover; max-width: 100%;"
+                        alt="...">
+                    <div class="carousel-caption d-none d-md-block" style="background-color: #333;">
+                        <h5>Adventure awaits in Southern Ethiopia</h5>
+                        <p>Plan your trip to Arbaminch and South Omo with our map-based app. Visualize destinations, services, and cultural hotspots - create an unforgettable itinerary!</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="{% static 'images/3.jpg' %}" class="d-block w-100 object-fit: cover; max-width: 100%;"
+                        alt="...">
+                    <div class="carousel-caption d-none d-md-block" style="background-color: #333;">
+                        <h5>More than just a map - it's your travel companion</h5>
+                        <p> Let our app guide you through Arbaminch and South Omo. Find everything you need for a seamless and unforgettable adventure!</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
             </button>
-
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-    </nav>
 
-    <!-- Rest of your content -->
-    <div class="container-fluid">
-        <div class="row">
-            <div id="carouselExampleCaptions" class="carousel slide">
-                <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
-                        aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
-                        aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
-                        aria-label="Slide 3"></button>
-                </div>
-                <div class="carousel-inner">
-                    <div class="carousel-item active" style="background-color: rebeccapurple; height: 60vh;">
-                        <img src="..." class="d-block w-100" alt="...">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>First slide label</h5>
-                            <p>Some representative placeholder content for the first slide.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item" style="background-color: red; height: 60vh;">
-                        <img src="..." class="d-block w-100" alt="...">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>Second slide label</h5>
-                            <p>Some representative placeholder content for the second slide.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item" style="background-color: blue; height: 60vh;">
-                        <img src="..." class="d-block w-100" alt="...">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>Third slide label</h5>
-                            <p>Some representative placeholder content for the third slide.</p>
-                        </div>
+    </div>
+    <br>
+    <div class="row justify-content-center">
+        <h3 style="display: flex; justify-content: center;">What's in Go-Tour</h3>
+        <div class="container-fluid d-flex justify-content-center">
+            <div class="row g-3">
+                <div class="col-md-4 mb-3 text-center">
+                    <div class="card">
                     </div>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+                <div class="col-md-4 mb-3 text-center">
+                    <div class="card">
+                    </div>
+                </div>
             </div>
+        </div>
+        <div class="col-md-4 mb-3 text-center">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Services</h5>
+                </div>
+                <div class="card-body card-body-expand">
+                    <p class="card-text">Explore Arbaminch & South Omo with ease! Our interactive map helps you find hotels, restaurants, gas stations, clinics, and cultural sites like museums and churches. Plan your perfect itinerary - find everything you need for an unforgettable adventure!</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 text-center">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="title">Attraction Sites</h5>
+                </div>
+                <div class="card-body card-body-expand">
+                    <p class="card-text">Our interactive map goes beyond basic services! Discover a staggering number of attractions across Arbaminch & South Omo. Explore 279 captivating sites, including natural wonders like waterfalls and scenic viewpoints, cultural treasures like museums and traditional villages, and man-made marvels. Plan your perfect adventure - find everything from historical sites to breathtaking landscapes, all in one place!</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 text-center">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="title">Routing</h5>
+                </div>
+                <div class="card-body card-body-expand">
+                    <p class="card-text">Plan your perfect itinerary with our routing functionality - find distances between any service or destination and create a seamless adventure!</p>
+                </div>
+            </div>
+        </div>
 
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class="row justify-content-center">
+        <h3 style="display: flex; justify-content: center;">Hosted By</h3>
+        <div class="container-fluid d-flex justify-content-center">
+            <div class="row g-3">
+                <div class="col-md-4 mb-3 text-center">
+                    <div class="card">
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3 text-center">
+                    <div class="card">
+                    </div>
+                </div>
+            </div>
         </div>
-        <br>
-        <div class="row justify-content-center">
-            <h3 style="display: flex; justify-content: center;">What's in go-tour</h3>
-            <div class="container-fluid d-flex justify-content-center">
-                <div class="row g-3">
-                    <div class="col-md-4 mb-3 text-center">
-                        <div class="card">
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3 text-center">
-                        <div class="card">
-                        </div>
-                    </div>
+        <div class="col-md-4 mb-3 text-center">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">SSGI</h5>
+                </div>
+                <div class="card-body">
+                    <div class="custom">
+                        <p><strong>Corporate Communication</strong><br>P.O. Box 21<br>Ethiopian Space Science and Geospatial Institute</p>
+                    <p><strong>Tel:</strong> +251-928-992614<br> <strong>Fax:</strong> +251-118-961050 <br> <strong>E-mail:</strong> mainessti@essti.gov.et , <a href="mailto:mainessti@essti.gov.et">mainessti@essti.gov.et</a></p></div>
+                    
                 </div>
             </div>
-            <div class="col-md-4 mb-3 text-center">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">Services</h5>
-                    </div>
-                    <div class="card-body card-body-expand">
-                        <p class="card-text">Visualize your desired Services.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3 text-center">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="title">Destinations</h5>
-                    </div>
-                    <div class="card-body card-body-expand">
-                        <p class="card-text">Visualize your desired destinations</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3 text-center">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="title">Routing</h5>
-                    </div>
-                    <div class="card-body card-body-expand">
-                        <p class="card-text">Visualize your desired destinations</p>
-                    </div>
-                </div>
-            </div>
-            
         </div>
-        <br>
-        <br>
-        <br>
-        <div class="row justify-content-center">
-            <h3 style="display: flex; justify-content: center;">Hosted By</h3>
-            <div class="container-fluid d-flex justify-content-center">
-                <div class="row g-3">
-                    <div class="col-md-4 mb-3 text-center">
-                        <div class="card">
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3 text-center">
-                        <div class="card">
-                        </div>
-                    </div>
+        <div class="col-md-4 mb-3 text-center">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="title">AMU</h5>
                 </div>
-            </div>
-            <div class="col-md-4 mb-3 text-center">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title">SSGI</h5>
+                <div class="card-body">
+
+
+                    <div class="custom">
+                        <p><strong>Corporate Communication</strong><br>P.O. Box 21<br>Arba Minch University</p>
+                        <p><strong>Tel:</strong> +251-46881-4986<br> <strong>Fax:</strong> +251-46881-0820/0279<br>
+                            <strong>E-mail:</strong> corcom@amu.edu.et , <a
+                                href="mailto:ictc@amu.edu.et">ictc@amu.edu.et</a></p>
                     </div>
-                    <div class="card-body">
-                        <p class="card-text">Address</p>
-                        <a href="#" class="stretched-link">Learn more</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3 text-center">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="title">AMU</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Adress</p>
-                        <a href="#" class="stretched-link">See details</a>
-                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-    </div>
-
-    <script src="{% static 'b5/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'js/jquery-1.10.2.min.js'%}"></script>
-
-
-
-</body>
-
-</html>
+</div>
+{% endblock content %}

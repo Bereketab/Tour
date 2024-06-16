@@ -246,7 +246,7 @@ class AuthPermission(models.Model):
 
 
 class Destinations(models.Model):
-    geom = models.TextField(blank=True, null=True)  # This field type is a guess.
+    geom = models.IntegerField(blank=True, null=True)  # This field type is a guess.
     objectid = models.IntegerField(db_column='OBJECTID', blank=True, null=True)  # Field name made lowercase.
     name = models.CharField(db_column='Name', blank=True, null=True)  # Field name made lowercase.
     datetimes = models.DateTimeField(db_column='DateTimeS', blank=True, null=True)  # Field name made lowercase.
@@ -327,11 +327,45 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
+SERVICE_TYPES = (
+    ('Air Port', 'Air Port'),
+    ('Bank', 'Bank'),
+    ('Beverage', 'Beverage'),
+    ('Bus Terminal', 'Bus Terminal'),
+    ('Café', 'Café'),
+    ('Camp Site', 'Camp Site'),
+    ('Catholic Church', 'Catholic Church'),
+    ('Clinic', 'Clinic'),
+    ('College', 'College'),
+    ('Garage', 'Garage'),
+    ('Gas Station', 'Gas Station'),
+    ('Health Center', 'Health Center'),
+    ('Health Post', 'Health Post'),
+    ('Hospital', 'Hospital'),
+    ('Hotel', 'Hotel'),
+    ('Lodge', 'Lodge'),
+    ('Mosque', 'Mosque'),
+    ('Municipal', 'Municipal'),
+    ('Museum', 'Museum'),
+    ('Office', 'Office'),
+    ('Open Market', 'Open Market'),
+    ('Orthodox Church', 'Orthodox Church'),
+    ('Pension', 'Pension'),
+    ('Pharmacy', 'Pharmacy'),
+    ('Police Station', 'Police Station'),
+    ('Protestant Church', 'Protestant Church'),
+    ('Repair', 'Repair'),
+    ('Restaurant', 'Restaurant'),
+    ('School', 'School'),
+    ('Stadium', 'Stadium'),
+    ('Super Market', 'Super Market'),
+    ('University', 'University'),
+)
 
 
 class Services(models.Model):
     id = models.CharField(primary_key=True)
-    geom = models.TextField(blank=True, null=True)  # This field type is a guess.
+    geom = models.IntegerField(blank=True, null=True)  # This field type is a guess.
     objectid = models.IntegerField(blank=True, null=True)
     x = models.FloatField(blank=True, null=True)
     y = models.FloatField(blank=True, null=True)
@@ -345,7 +379,7 @@ class Services(models.Model):
     phone_line = models.CharField(blank=True, null=True)
     email = models.CharField(blank=True, null=True)
     website = models.CharField(blank=True, null=True)
-    service_ty = models.CharField(blank=True, null=True)
+    service_ty = models.CharField(max_length=20, choices=SERVICE_TYPES, blank=True, null=True)
     owner_name = models.CharField(blank=True, null=True)
     moto = models.CharField(blank=True, null=True)
     

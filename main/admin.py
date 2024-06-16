@@ -7,6 +7,7 @@ class DestinationAdmin(admin.ModelAdmin):
     pass
 
 class ServiceAdmin(admin.ModelAdmin):
+    search_fields = ['full_name']
     pass
 admin.site.register(Destinations, DestinationAdmin)
 admin.site.register(Services, ServiceAdmin)
