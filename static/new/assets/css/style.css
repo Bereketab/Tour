@@ -3,18 +3,6 @@
 # Font-face
 --------------------------------------------------------------*/
 
-@font-face {
-  font-family: 'Nexa';
-  src: url('../../Nexa-font/Nexa-Light.ttf') format('truetype');
-  font-weight: bold;
-  /* Add more src declarations for different font weights or styles if necessary */
-}
-@font-face {
-  font-family: 'Nexa-Book';
-  src: url('../../Nexa-font/Nexa-Book.ttf') format('truetype');
-  font-weight: bold;
-  /* Add more src declarations for different font weights or styles if necessary */
-}
 
 /*--------------------------------------------------------------
 # Spatial layers
@@ -142,7 +130,7 @@ h6 {
   margin-top: 70px;
 } */
 #header {
-  background: #0766AD;
+  background: #BF4747;
   transition: all 0.5s;
   z-index: 997;
   padding: 20px;
