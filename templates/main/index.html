@@ -89,7 +89,7 @@
 
 <div class="offcanvas offcanvas-end show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasRightLabel">Layers</h5>
+    <h5 class="offcanvas-title" id="offcanvasRightLabel">Features</h5>
     <!-- <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
   </div>
   <div class="offcanvas-body">
@@ -124,7 +124,7 @@
                     <li>
                         <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#step1"></span>
                         <input type="checkbox" id="step1" />
-                        <label for="step1">Services ({{combined_data.services.count}})</label>
+                        <label for="step1">Services  <span class="icon-room_service"></span> ({{combined_data.services.count}})</label>
                 
                         <ul id="step1" class="collapse">
                           
@@ -134,7 +134,7 @@
                                 <span class="collapse-icon bi bi-chevron-right" data-toggle="collapse" data-target="#{{ service_info.service_type }}"></span>
                                 <input type="checkbox" id="{{ service_info.service_type }}" data-x="{{ obj.x }}" data-y="{{ obj.y }}"> <label for="{{ service_info.service_type }}">{{ service_info.service_type }}</label>
                                 {% if service_info.service_type == "Air Port" %}
-                                    <i class="bi bi-person-hearts"></i> ({{ service_info.count }})
+                                <span class="icon-airplane"></span>    ({{ service_info.count }})
                                     {% elif service_info.service_type == "Bank" %}
                                     <i class="bi bi-person-hearts"></i> ({{ service_info.count }})
                                     {% elif service_info.service_type == "Beverage" %}
@@ -457,15 +457,17 @@
         type: 'base',
         visible: true,
     })
-var omoBoundary=JSON.parse('{{boundary|escapejs }}')
+    if('{{boundary }}'==''){
+        console.log('no boundary data') 
+        var vectorLayer = new ol.layer.Vector();
+        
+    }
+    else{
+        var omoBoundary=JSON.parse('{{boundary|escapejs }}')
+
 console.log(omoBoundary[0].coordinates[0][0])
-    // Create a GeoJSON format instance
 const geojsonFormat = new ol.format.GeoJSON();
 
-// Parse the GeoJSON-like data
-
-
-// Convert GeoJSON-like data to OpenLayers Feature
 const feature3 = geojsonFormat.readFeature(omoBoundary[0]);
 console.log(omoBoundary[0])
 const vectorSource = new ol.source.Vector({
@@ -473,10 +475,7 @@ const vectorSource = new ol.source.Vector({
   format: geojsonFormat,
   strategy: ol.loadingstrategy.bbox
 });
-
-    // Define a style function to dynamically set color based on feature properties (optional)
 var styleFunction = function(feature) {
-    // Access feature properties (if applicable) and assign color based on logic
     var color = feature.get('someProperty') ? 'blue' : 'red'; // Example
 
     return new ol.style.Style({
@@ -490,13 +489,15 @@ var styleFunction = function(feature) {
     
          
     
-    // Define the vector layer
     var vectorLayer = new ol.layer.Vector({
         source: vectorSource,
         title: 'Gamo and South Omo Boundary',
         visible:false,
         style: styleFunction 
     });  
+    
+    }
+
     var map = new ol.Map({
         target: 'map',
         layers: [
@@ -667,8 +668,8 @@ map.getView().animate({
             <li><b>UNESCO Registration:</b> ${properties.unesco_reg || 'N/A'}</li>
             <li><b>Photo Number:</b> ${properties.photo_no || 'N/A'}</li>
             <li><b>Photo Location:</b> ${properties.photo_loca || 'N/A'}</li>
-            <li><b>Amharic Description:</b> <textarea disabled row="6" style="overflow:scroll;">${properties.amharic || 'N/A'}</textarea></li>
-            <li><b>English Description:</b> <textarea disabled style="overflow:scroll;">${properties.english || 'N/A'}</textarea></li>
+            <li><b>Amharic Description:</b> <textarea style="overflow:scroll; width:100%">${properties.amharic || 'N/A'}</textarea></li>
+            <li><b>English Description:</b> <textarea  style="overflow:scroll; width:100%">${properties.english || 'N/A'}</textarea></li>
           
                     ${properties.image1 ? `<img style="position: relative; width: 40%;" src="/media/${properties.image1}" alt="Image 1">` : ''}
                     
@@ -987,8 +988,8 @@ if (selectedItem.hasOwnProperty('x') && selectedItem.hasOwnProperty('y')) {
 const service_styles = [
       {
       name: "Air Port",
-      fill: "#3fa6f2",
-      stroke: "#9d5c9e"
+      fill: "e9af",
+     
       },
       {
       name: "Bank",
@@ -1170,13 +1171,20 @@ const service_styles = [
               const service_style = service_styles.find(style => style.name === coord.service_ty);
           
           if(service_style){
-              return new ol.style.Style({
-                  image: new ol.style.Circle({
-                      radius: 6,
-                      fill: new ol.style.Fill({color: service_style.fill}),
-                      stroke: new ol.style.Stroke({color: service_style.stroke, width: 2})
-                  })
-              });
+            return new ol.style.Style({
+    text: new ol.style.Text({
+        text: service_style?.icon || '\uf041', // Default FontAwesome icon (e.g., the map marker icon)
+        font: 'Normal 16px FontAwesome', // FontAwesome with size
+        fill: new ol.style.Fill({
+            color: service_style?.fill || '#000000' // Default fill color
+        }),
+        stroke: new ol.style.Stroke({
+            color: service_style?.stroke || '#FFFFFF', // Default stroke color
+            width: service_style?.strokeWidth || 2 // Default stroke width
+        }),
+        offsetY: -8 // Offset to adjust position, can be customized
+    })
+});
           }
           // If no matching style found, return a default style
           return new ol.style.Style({

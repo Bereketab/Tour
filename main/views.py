@@ -350,7 +350,7 @@ def app(request):
     distinct_services = combined_data['services'].values('service_ty').annotate(count=Count('service_ty'))
     context['distinct_destinations'] = json.dumps(list(distinct_destinations))
     context['distinct_services'] = json.dumps(list(distinct_services))
-    context['boundary'] = json.dumps(list(getBoundary()))
+    # context['boundary'] = json.dumps(list(getBoundary()))
     # print(getBoundary())
     return render(request,'main/index.html',context)
 

@@ -246,7 +246,7 @@ class AuthPermission(models.Model):
 
 
 class Destinations(models.Model):
-    geom = models.IntegerField(blank=True, null=True)  # This field type is a guess.
+    geom = models.TextField(blank=True, null=True)  # This field type is a guess.
     objectid = models.IntegerField(db_column='OBJECTID', blank=True, null=True)  # Field name made lowercase.
     name = models.CharField(db_column='Name', blank=True, null=True)  # Field name made lowercase.
     datetimes = models.DateTimeField(db_column='DateTimeS', blank=True, null=True)  # Field name made lowercase.
@@ -365,7 +365,7 @@ SERVICE_TYPES = (
 
 class Services(models.Model):
     id = models.CharField(primary_key=True)
-    geom = models.IntegerField(blank=True, null=True)  # This field type is a guess.
+    geom = models.TextField(blank=True, null=True)  # This field type is a guess.
     objectid = models.IntegerField(blank=True, null=True)
     x = models.FloatField(blank=True, null=True)
     y = models.FloatField(blank=True, null=True)
