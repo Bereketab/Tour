@@ -6,9 +6,11 @@ WORKDIR /app
 
 # Copy the requirements file to the Docker container
 COPY requirements.txt .
-
+RUN pip install --upgrade pip
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+
 
 # Copy the entire Django project to the Docker container
 COPY . .
@@ -18,3 +20,4 @@ EXPOSE 8000
 
 # Define the command to run the Django app
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
