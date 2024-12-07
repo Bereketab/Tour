@@ -6,11 +6,13 @@ from django.core import serializers
 # Create your views here.
 from rest_framework import viewsets
 from .serializers import DestinationsSerializer, ServicesSerializer
-
 import json
 from django.http import HttpResponse
-
 from collections import defaultdict
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.db import connection
+import geojson
 
 def getServiceMap(services_data_dict):
     service_mapping = {}
@@ -95,13 +97,12 @@ def getFrontData(services_data_dict):
         result.append(category_dict)
     return result
 
-def index(request):
-    return render(request,'main/landing.html',context)
+# def index(request):
+#     return render(request,'main/landing.html',context)
 context = {}
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.db import connection
-import geojson
+
+def index(request):
+    return render(request,'main/index.html')
 
 @csrf_exempt
 def shortest_path(request):
@@ -150,10 +151,6 @@ def shortest_path(request):
         })
     else:
         return JsonResponse({"error": "No path found"}, status=404)
- 
-
-
-
 
 def getBoundary():
     with connection.cursor() as cursor:
@@ -352,7 +349,7 @@ def app(request):
     context['distinct_services'] = json.dumps(list(distinct_services))
     # context['boundary'] = json.dumps(list(getBoundary()))
     # print(getBoundary())
-    return render(request,'main/index.html',context)
+    return render(request,'main/app.html',context)
 
 
 
