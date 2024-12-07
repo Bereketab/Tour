@@ -1,8 +1,8 @@
-# /eaii_startup/settings.py
-/main/__pycache__/
-/main/migrations/
-# build artifacts
+# Python bytecode files
 *.pyc
+**/__pycache__/
+
+# Build artifacts
 *.egg-info
 .idea/
 .vscode/
@@ -11,16 +11,3 @@
 # OSX specific
 .Python
 .DS_Store
-/GoTour/__pycache__
-/GoTour/__pycache__/*
-/GoTour/settings.py
-/main/__pycache__
-/main/__pycache__/*
-/main/__pycache__/*.pyc
-/main/migrations/
-/main/migrations/*
-/main/migrations/*.pyc
-/main/migrations/*.py
-/media/
-/main/templatetags/__pycache__
-/media

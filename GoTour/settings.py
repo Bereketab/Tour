@@ -95,10 +95,10 @@ WSGI_APPLICATION = 'GoTour.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'gis',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST': 'localhost',
+        'HOST': '196.188.116.33',
         'PORT': '5432',
     }
 }
